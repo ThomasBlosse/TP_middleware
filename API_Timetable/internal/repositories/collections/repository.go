@@ -54,7 +54,7 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 
 
 
-func DeleteItem(collectionId uuid.UUID, itemId uuid.UUID) error {
+func DeleteCollectionById(collectionId uuid.UUID, itemId uuid.UUID) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err

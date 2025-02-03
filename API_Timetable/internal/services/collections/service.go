@@ -46,7 +46,7 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 
 
 func PostCollection(collection models.Collection) error {
-	err := repository.PostCollection(collection)
+	err := repository.AddCollection(collection)
 	if err != nil {
 		logrus.Errorf("error adding collection: %s", err.Error())
 		return &models.CustomError{
@@ -58,8 +58,8 @@ func PostCollection(collection models.Collection) error {
 	return nil
 }
 
-func PutItem(collectionId uuid.UUID, item models.Item) error {
-	err := repository.PutItem(collectionId, item)
+func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
+	err := repository.PutCollectionById(collectionId, item)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
@@ -78,8 +78,8 @@ func PutItem(collectionId uuid.UUID, item models.Item) error {
 }
 
 
-func DeleteItem(collectionId uuid.UUID, itemId uuid.UUID) error {
-	err := repository.DeleteItem(collectionId, itemId)
+func DeleteCollectionById(collectionId uuid.UUID, itemId uuid.UUID) error {
+	err := repository.DeleteCollectionById(collectionId, itemId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{

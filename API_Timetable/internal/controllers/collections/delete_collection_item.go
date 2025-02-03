@@ -23,7 +23,7 @@ func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	itemId, _ := ctx.Value("itemId").(uuid.UUID)
 
 	// Call the service to delete the item from the collection
-	if err := collections.DeleteItem(collectionId, itemId); err != nil {
+	if err := collections.DeleteCollectionById(collectionId, itemId); err != nil {
 		logrus.Errorf("error deleting item: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {
