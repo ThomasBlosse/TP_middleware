@@ -43,3 +43,57 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 
 	return collection, err
 }
+
+
+func AddCollection(collection models.Collection) error {
+	err := repository.AddCollection(collection)
+	if err != nil {
+		logrus.Errorf("error adding collection: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
+
+
+func UpdateItem(collectionId uuid.UUID, item models.Item) error {
+	err := repository.UpdateItem(collectionId, item)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Item not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error updating item: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
+
+
+func DeleteItem(collectionId uuid.UUID, itemId uuid.UUID) error {
+	err := repository.DeleteItem(collectionId, itemId)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Item not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error deleting item: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
