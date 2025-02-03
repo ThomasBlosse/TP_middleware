@@ -48,3 +48,24 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	}
 	return &collection, err
 }
+
+
+
+
+
+
+func DeleteItem(collectionId uuid.UUID, itemId uuid.UUID) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("DELETE FROM items WHERE collection_id=? AND id=?", collectionId.String(), itemId.String())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
