@@ -45,20 +45,6 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 }
 
 
-func AddCollection(collection models.Collection) error {
-	err := repository.AddCollection(collection)
-	if err != nil {
-		logrus.Errorf("error adding collection: %s", err.Error())
-		return &models.CustomError{
-			Message: "Something went wrong",
-			Code:    http.StatusInternalServerError,
-		}
-	}
-
-	return nil
-}
-
-
 func UpdateItem(collectionId uuid.UUID, item models.Item) error {
 	err := repository.UpdateItem(collectionId, item)
 	if err != nil {
@@ -69,6 +55,20 @@ func UpdateItem(collectionId uuid.UUID, item models.Item) error {
 			}
 		}
 		logrus.Errorf("error updating item: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
+
+
+func AddCollection(collection models.Collection) error {
+	err := repository.AddCollection(collection)
+	if err != nil {
+		logrus.Errorf("error adding collection: %s", err.Error())
 		return &models.CustomError{
 			Message: "Something went wrong",
 			Code:    http.StatusInternalServerError,
