@@ -1,11 +1,13 @@
 package collections
 
 import (
+	"API_Timetable/internal/services/collections"
 	"encoding/json"
+	"middleware/example/internal/models"
+	"net/http"
+
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
-	"API_Timetable/internal/services/collections"
-	"net/http"
 )
 
 // DeleteCollectionItem
@@ -22,21 +24,24 @@ func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 	itemId, _ := ctx.Value("itemId").(uuid.UUID)
 
-	// Call the service to delete the item from the collection
-	if err := collections.DeleteCollectionById(collectionId, itemId); err != nil {
+	err := collections.AddCollection(newCollection)
+	if err != nil 
+	{
 		logrus.Errorf("error deleting item: %s", err.Error())
+
 		customError, isCustom := err.(*models.CustomError)
-		if isCustom {
+		if isCustom 
+		{
 			w.WriteHeader(customError.Code)
 			body, _ := json.Marshal(customError)
 			_, _ = w.Write(body)
-		} else {
+		} 
+		else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Respond with success message
 	w.WriteHeader(http.StatusOK)
 	body, _ := json.Marshal(map[string]string{"message": "Item deleted successfully"})
 	_, _ = w.Write(body)

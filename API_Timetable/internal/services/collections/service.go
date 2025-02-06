@@ -2,11 +2,12 @@ package collections
 
 import (
 	"database/sql"
+	"middleware/example/internal/models"
+	"middleware/example/internal/repositories/collections"
+	"net/http"
+
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
-	"middleware/example/internal/models"
-	repository "middleware/example/internal/repositories/collections"
-	"net/http"
 )
 
 func GetAllCollections() ([]models.Collection, error) {
@@ -44,9 +45,8 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	return collection, err
 }
 
-
 func PostCollection(collection models.Collection) error {
-	err := repository.AddCollection(collection)
+	err := repository.PostCollection(collection)
 	if err != nil {
 		logrus.Errorf("error adding collection: %s", err.Error())
 		return &models.CustomError{
@@ -76,7 +76,6 @@ func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
 
 	return nil
 }
-
 
 func DeleteCollectionById(collectionId uuid.UUID, itemId uuid.UUID) error {
 	err := repository.DeleteCollectionById(collectionId, itemId)

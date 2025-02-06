@@ -1,12 +1,13 @@
 package collections
 
 import (
-	"encoding/json"
-	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
 	"API_Timetable/internal/models"
 	"API_Timetable/internal/services/collections"
+	"encoding/json"
 	"net/http"
+
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 // CreateCollection
@@ -21,18 +22,16 @@ import (
 func CreateCollection(w http.ResponseWriter, r *http.Request) {
 	var newCollection models.Collection
 
-	// Decode the request body into the collection model
 	if err := json.NewDecoder(r.Body).Decode(&newCollection); err != nil {
 		logrus.Errorf("error decoding request body: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// Generate a new UUID for the collection
 	newCollection.Id = uuid.Must(uuid.NewV4())
 
-	// Call the service to add the collection
-	if err := collections.AddCollection(newCollection); err != nil {
+	err := collections.PostCollection(newCollection)
+	if err != nil {
 		logrus.Errorf("error adding collection: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {

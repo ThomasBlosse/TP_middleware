@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/sirupsen/logrus"
 	"API_Timetable/internal/controllers/collections"
 	"API_Timetable/internal/helpers"
-	"API_Timetable/internal/models"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -29,7 +29,6 @@ func main() {
 
 }
 
-
 func init() {
 	db, err := helpers.OpenDB()
 	if err != nil {
@@ -37,8 +36,15 @@ func init() {
 	}
 	schemes := []string{
 		`CREATE TABLE IF NOT EXISTS collections (
-			id VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
-			content VARCHAR(255) NOT NULL
+			id UUID PRIMARY KEY NOT NULL UNIQUE,
+			resourceIds TEXT NOT NULL,
+			uid VARCHAR(255) NOT NULL,
+			description TEXT NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			started TIMESTAMP NOT NULL,
+			end TIMESTAMP NOT NULL,
+			location VARCHAR(255) NOT NULL,
+			lastupdate TIMESTAMP NOT NULL,
 		);`,
 	}
 	for _, scheme := range schemes {

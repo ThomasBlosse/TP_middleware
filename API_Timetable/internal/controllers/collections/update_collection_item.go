@@ -1,12 +1,13 @@
 package collections
 
 import (
-	"encoding/json"
-	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
 	"API_Timetable/internal/models"
 	"API_Timetable/internal/services/collections"
+	"encoding/json"
 	"net/http"
+
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 // UpdateCollectionItem
@@ -24,15 +25,15 @@ func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
 	var updatedItem models.Item
-	// Decode the request body into the updated item model
+
 	if err := json.NewDecoder(r.Body).Decode(&updatedItem); err != nil {
 		logrus.Errorf("error decoding request body: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// Call the service to update the item in the collection
-	if err := collections.UpdateItem(collectionId, updatedItem); err != nil {
+	err := collections.PutCollectionById(newCollection)
+	if err != nil {
 		logrus.Errorf("error updating item: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {
