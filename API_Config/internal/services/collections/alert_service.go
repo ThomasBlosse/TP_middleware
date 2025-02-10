@@ -148,3 +148,25 @@ func UpdateAlert(alertId uuid.UUID, newTargets interface{}) error {
 
 	return nil
 }
+
+func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
+	targetsMap, ok := newTargets.(map[string]interface{})
+	if !ok {
+		return &models.CustomError{
+			Message: "Invalid targets format",
+			Code:    http.StatusBadRequest,
+		}
+	}
+
+	if allValue, exists := targetsMap["all"]; exists {
+		if all, ok := allValue.(bool); ok && all {
+			if len(targetsMap) > 1 {
+				return &models.CustomError{
+					Message: "If 'all' is present, no other resources should be specified",
+					Code:    http.StatusBadRequest,
+				}
+			}
+			return UpdateAlert(alert)
+		}
+	}
+}
