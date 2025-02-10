@@ -10,16 +10,16 @@ import (
 )
 
 func GetAllResources() ([]models.Resources, error) {
-	resources, err := resources.GetAllResources()
+	allResources, err := resources.GetAllResources()
 	if err != nil {
-		logrus.Errorf("error retrieving resources : %s", err.Error())
+		logrus.Errorf("error retrieving all the resources : %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
 			Code:    500,
 		}
 	}
 
-	return resources, nil
+	return allResources, nil
 }
 
 func GetResourceById(id uuid.UUID) (*models.Resources, error) {
