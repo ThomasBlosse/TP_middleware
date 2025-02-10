@@ -63,6 +63,18 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 	return resourceAlerts, nil
 }
 
+func insertAlert(alert models.Alerts) error {
+	err := alerts.PostAlert(alert)
+	if err != nil {
+		logrus.Errorf("error adding alert: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+	return nil
+}
+
 func PostAlert(alert models.Alerts) error {
 	targetsMap, ok := alert.Targets.(map[string]interface{})
 	if !ok {
