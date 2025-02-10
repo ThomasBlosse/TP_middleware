@@ -92,7 +92,7 @@ func PostAlert(alert models.Alerts) error {
 					Code:    http.StatusBadRequest,
 				}
 			}
-			return insertAlert(alert)
+			return InsertAlert(alert)
 		}
 	}
 
