@@ -84,7 +84,7 @@ func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, l
 	}
 	defer helpers.CloseDB(db)
 
-	_, err = db.Exec("UPDATE items SET started=?, end=?, location=?, lastupdate=? WHERE collection_id=?",
+	_, err = db.Exec("UPDATE collections SET started=?, end=?, location=?, lastupdate=? WHERE collection_id=?",
 		start,
 		end,
 		location,
@@ -106,7 +106,7 @@ func DeleteCollectionById(collectionId uuid.UUID) error {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("DELETE FROM items WHERE collection_id=?", collectionId.String())
+	_, err = db.Exec("DELETE FROM collections WHERE collection_id=?", collectionId.String())
 
 	if err != nil {
 		return err
