@@ -63,7 +63,7 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 	return resourceAlerts, nil
 }
 
-func insertAlert(alert models.Alerts) error {
+func InsertAlert(alert models.Alerts) error {
 	err := alerts.PostAlert(alert)
 	if err != nil {
 		logrus.Errorf("error adding alert: %s", err.Error())
@@ -84,21 +84,15 @@ func PostAlert(alert models.Alerts) error {
 		}
 	}
 
-	if allValue, allExists := targetsMap['all'];
-	if allExists{
-		all, ok := allValue.(bool)
-		if !ok || !all{
-			return &models.CustomError{
-				Message: 	"Invalid 'all' value",
-				Code:		http.StatusBadRequest
+	if allValue, exists := targetsMap["all"]; exists {
+		if all, ok := allValue.(bool); ok && all {
+			if len(targetsMap) > 1 {
+				return &models.CustomError{
+					Message: "If 'all' is present, no other resources should be specified",
+					Code:    http.StatusBadRequest,
+				}
 			}
-		}
-
-		if len(targetsMap) > 1 {
-			return &models.CustomError{
-				Message: 	"'all' cannot be combined with other target"
-				Code:		http.StatusBadRequest
-			}
+			return insertAlert(alert)
 		}
 	}
 }
