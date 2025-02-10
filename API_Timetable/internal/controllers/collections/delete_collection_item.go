@@ -1,9 +1,9 @@
 package collections
 
 import (
+	"API_Timetable/internal/models"
 	"API_Timetable/internal/services/collections"
 	"encoding/json"
-	"middleware/example/internal/models"
 	"net/http"
 
 	"github.com/gofrs/uuid"
@@ -21,22 +21,18 @@ import (
 // @Router       /collections/{id}/items/{item_id} [delete]
 func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
-	itemId, _ := ctx.Value("itemId").(uuid.UUID)
+	collectionId, _ := ctx.Value("Id").(uuid.UUID)
 
-	err := collections.AddCollection(newCollection)
-	if err != nil 
-	{
+	err := collections.DeleteCollectionById(collectionId)
+	if err != nil {
 		logrus.Errorf("error deleting item: %s", err.Error())
 
 		customError, isCustom := err.(*models.CustomError)
-		if isCustom 
-		{
+		if isCustom {
 			w.WriteHeader(customError.Code)
 			body, _ := json.Marshal(customError)
 			_, _ = w.Write(body)
-		} 
-		else {
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return

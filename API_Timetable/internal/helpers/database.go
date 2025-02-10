@@ -2,7 +2,9 @@ package helpers
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
+	"strings"
+
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,3 +22,16 @@ func CloseDB(db *sql.DB) {
 	}
 }
 
+func UUIDSliceToString(uuids []*uuid.UUID) string {
+
+	var strUUIDs []string
+
+	for _, u := range uuids {
+
+		strUUIDs = append(strUUIDs, u.String())
+
+	}
+
+	return strings.Join(strUUIDs, ",")
+
+}

@@ -1,14 +1,14 @@
 package collections
 
 import (
-	"middleware/example/internal/helpers"
-	"middleware/example/internal/models"
+	"API_Timetable/internal/helpers"
+	"API_Timetable/internal/models"
+	"time"
 
 	"github.com/gofrs/uuid"
 )
 
-func GetAllCollections() ([]models.Collection, error) 
-{
+func GetAllCollections() ([]models.Collection, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func GetAllCollections() ([]models.Collection, error)
 	collections := []models.Collection{}
 	for rows.Next() {
 		var data models.Collection
-		err = rows.Scan(&data.Id, &data.Content)
+		err = rows.Scan(&data.Id, &data.ResourceIds, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
 		if err != nil {
 			return nil, err
 		}
@@ -35,8 +35,6 @@ func GetAllCollections() ([]models.Collection, error)
 	return collections, err
 }
 
-
-
 func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
@@ -46,14 +44,12 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	helpers.CloseDB(db)
 
 	var collection models.Collection
-	err = row.Scan(&collection.Id, &collection.Content)
+	err = row.Scan(&collection.Id, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
 	}
 	return &collection, err
 }
-
-
 
 func PostCollection(collection models.Collection) error {
 	db, err := helpers.OpenDB()
@@ -64,7 +60,7 @@ func PostCollection(collection models.Collection) error {
 
 	_, err = db.Exec("INSERT INTO collections (id, resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		collection.Id.String(),
-		collection.ResourceIds.String(),
+		helpers.UUIDSliceToString(collection.ResourceIds),
 		collection.Uid,
 		collection.Description,
 		collection.Name,
@@ -75,26 +71,25 @@ func PostCollection(collection models.Collection) error {
 	)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &collection, nil
+	return nil
 }
 
-
-
-func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
+func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, location string) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 	defer helpers.CloseDB(db)
 
-	_, err = db.Exec("UPDATE items SET name=?, description=? WHERE collection_id=? AND id=?",
-		item.Name,
-		item.Description,
+	_, err = db.Exec("UPDATE items SET started=?, end=?, location=?, lastupdate=? WHERE collection_id=?",
+		start,
+		end,
+		location,
+		time.Now(),
 		collectionId.String(),
-		item.Id.String(),
 	)
 
 	if err != nil {
@@ -104,16 +99,14 @@ func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
 	return nil
 }
 
-
-
-func DeleteCollectionById(collectionId uuid.UUID, itemId uuid.UUID) error {
+func DeleteCollectionById(collectionId uuid.UUID) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	_, err = db.Exec("DELETE FROM items WHERE collection_id=? AND id=?", collectionId.String(), itemId.String())
+	_, err = db.Exec("DELETE FROM items WHERE collection_id=?", collectionId.String())
 
 	if err != nil {
 		return err

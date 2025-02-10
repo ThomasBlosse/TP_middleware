@@ -1,10 +1,11 @@
 package collections
 
 import (
+	"API_Timetable/internal/models"
+	repository "API_Timetable/internal/repositories/collections"
 	"database/sql"
-	"middleware/example/internal/models"
-	"middleware/example/internal/repositories/collections"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
@@ -58,8 +59,8 @@ func PostCollection(collection models.Collection) error {
 	return nil
 }
 
-func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
-	err := repository.PutCollectionById(collectionId, item)
+func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, location string) error {
+	err := repository.PutCollectionById(collectionId, start, end, location)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
@@ -77,8 +78,8 @@ func PutCollectionById(collectionId uuid.UUID, item models.Item) error {
 	return nil
 }
 
-func DeleteCollectionById(collectionId uuid.UUID, itemId uuid.UUID) error {
-	err := repository.DeleteCollectionById(collectionId, itemId)
+func DeleteCollectionById(collectionId uuid.UUID) error {
+	err := repository.DeleteCollectionById(collectionId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{

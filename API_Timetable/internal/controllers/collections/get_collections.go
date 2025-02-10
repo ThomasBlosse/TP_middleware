@@ -1,11 +1,12 @@
 package collections
 
 import (
+	"API_Timetable/internal/models"
+	"API_Timetable/internal/services/collections"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
-	"middleware/example/internal/models"
-	"middleware/example/internal/services/collections"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 // GetCollections
@@ -37,5 +38,4 @@ func GetCollections(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	body, _ := json.Marshal(collections)
 	_, _ = w.Write(body)
-	return
 }

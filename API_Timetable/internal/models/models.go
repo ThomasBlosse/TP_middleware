@@ -14,6 +14,6 @@ type Collection struct {
 	Name        string       `json:"name"`
 	Started     time.Time    `json:"started"`
 	End         time.Time    `json:"end"`
-	Location    str          `json:"location"`
+	Location    string       `json:"location"`
 	LastUpdate  time.Time    `json:"lastupdate"`
 }

@@ -28,8 +28,8 @@ func CreateCollection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newCollection.Id = uuid.Must(uuid.NewV4())
-
+	newUUID := uuid.Must(uuid.NewV4())
+	newCollection.Id = &newUUID
 	err := collections.PostCollection(newCollection)
 	if err != nil {
 		logrus.Errorf("error adding collection: %s", err.Error())

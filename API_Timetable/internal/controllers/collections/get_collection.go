@@ -1,12 +1,13 @@
 package collections
 
 import (
-	"encoding/json"
-	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
 	"API_Timetable/internal/models"
 	"API_Timetable/internal/services/collections"
+	"encoding/json"
 	"net/http"
+
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 // GetCollection
@@ -20,7 +21,7 @@ import (
 // @Router       /collections/{id} [get]
 func GetCollection(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("Id").(uuid.UUID)
 
 	collection, err := collections.GetCollectionById(collectionId)
 	if err != nil {
@@ -39,6 +40,4 @@ func GetCollection(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	body, _ := json.Marshal(collection)
 	_, _ = w.Write(body)
-	return
 }
-
