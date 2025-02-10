@@ -40,3 +40,15 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 
 	return resource, nil
 }
+
+func PostResource(resource models.Resources) error {
+	err := resources.PostCollection(resource)
+	if err != nil {
+		logrus.Errorf("error adding resource: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+	return nil
+}
