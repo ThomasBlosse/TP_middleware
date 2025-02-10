@@ -18,3 +18,22 @@ func GetAllAlerts() ([]models.Alerts, error) {
 
 	return allAlerts, nil
 }
+
+func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
+	alert, err := alerts.GetAlertById(id)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return nil, &models.CustomError{
+				Message: "alert not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error retrieving alerts : %s", err.Error())
+		return nil, &models.CustomError{
+			Message: "Something went wrong",
+			Code:    500,
+		}
+	}
+
+	return alert, nil
+}
