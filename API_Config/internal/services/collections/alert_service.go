@@ -3,6 +3,7 @@ package collections
 import (
 	"API_Config/internal/models\"
 	alerts "API_Config/internal/repositories/collections"
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -36,4 +37,18 @@ func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
 	}
 
 	return alert, nil
+}
+
+func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
+	_, err := resource_service.GetResourceById(resourceId)
+	if err != nil {
+		if customErr, ok := err.(*models.CustomError); ok {
+			return nil, customErr
+		}
+		logrus.Errorf("error retrieving resource : %s", err.Error())
+		return nil, &models.CustomError{
+			Message: "Something went wrong",
+			Code:    500,
+		}
+	}
 }

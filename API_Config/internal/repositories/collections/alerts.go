@@ -4,6 +4,7 @@ import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models"
 	"encoding/json"
+	"github.com/gofrs/uuid"
 )
 
 func GetAllAlerts() ([]models.Alerts, error) {
@@ -47,7 +48,7 @@ func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
 	return &alert, nil
 }
 
-func GetAlertsByResource(resourceId uuid.UUID) ([]Alerts, error) {
+func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
