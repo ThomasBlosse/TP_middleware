@@ -127,3 +127,21 @@ func PostAlert(alert models.Alerts) error {
 
 	return nil
 }
+
+func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+
+	targetsJSON, err := json.Marshal(newTargets)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("UPDATE alerts SET targets = ? WHERE id = ?",
+		string(targetsJSON),
+		alertId.String(),
+	)
+	return err
+}
