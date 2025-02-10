@@ -3,6 +3,7 @@ package collections
 import (
 	"API_Timetable/internal/helpers"
 	"API_Timetable/internal/models"
+	"github.com/gofrs/uuid"
 )
 
 func GetAllResources() ([]models.Resources, error) {
@@ -44,4 +45,25 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 		return nil, err
 	}
 	return &resource, nil
+}
+
+func PostResource(resource models.Resources) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("INSERT INTO resources (name, uid, id) VALUES (?, ?, ?)",
+		resource.Name,
+		resource.Uid,
+		resource.Id.String(),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	helpers.CloseDB(db)
+
+	return nil
 }
