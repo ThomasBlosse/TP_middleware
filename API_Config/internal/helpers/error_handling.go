@@ -8,7 +8,6 @@ import (
 	"net/http"
 )
 
-// CheckResourceExists vérifie si une ressource existe, sinon retourne une erreur CustomError.
 func CheckResourceExists(resourceId uuid.UUID) error {
 	_, err := resource_service.GetResourceById(resourceId)
 	if err != nil {
