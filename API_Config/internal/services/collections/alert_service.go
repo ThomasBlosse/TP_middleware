@@ -96,35 +96,9 @@ func PostAlert(alert models.Alerts) error {
 		}
 	}
 
-	if resources, exists := targetsMap["resources"]; exists {
-		if resourceList, ok := resources.([]interface{}); ok {
-			for _, resourceID := range resourceList {
-				resourceIDStr, ok := resourceID.(string)
-				if !ok {
-					return &models.CustomError{
-						Message: "Invalid resource ID format",
-						Code:    http.StatusBadRequest,
-					}
-				}
-
-				resourceUUID, err := uuid.FromString(resourceIDStr)
-				if err != nil {
-					return &models.CustomError{
-						Message: "Invalid UUID format",
-						Code:    http.StatusBadRequest,
-					}
-				}
-
-				if err := helpers.CheckResourceExists(resourceUUID); err != nil {
-					return err
-				}
-			}
-		} else {
-			return &models.CustomError{
-				Message: "Invalid resources format",
-				Code:    http.StatusBadRequest,
-			}
-		}
+	err := helpers.CheckingIfAllResourcesExist(targetsMap)
+	if err != nil {
+		return err
 	}
 
 	return InsertAlert(alert)
@@ -170,35 +144,9 @@ func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
 		}
 	}
 
-	if resources, exists := targetsMap["resources"]; exists {
-		if resourceList, ok := resources.([]interface{}); ok {
-			for _, resourceID := range resourceList {
-				resourceIDStr, ok := resourceID.(string)
-				if !ok {
-					return &models.CustomError{
-						Message: "Invalid resource ID format",
-						Code:    http.StatusBadRequest,
-					}
-				}
-
-				resourceUUID, err := uuid.FromString(resourceIDStr)
-				if err != nil {
-					return &models.CustomError{
-						Message: "Invalid UUID format",
-						Code:    http.StatusBadRequest,
-					}
-				}
-
-				if err := helpers.CheckResourceExists(resourceUUID); err != nil {
-					return err
-				}
-			}
-		} else {
-			return &models.CustomError{
-				Message: "Invalid resources format",
-				Code:    http.StatusBadRequest,
-			}
-		}
+	err := helpers.CheckingIfAllResourcesExist(targetsMap)
+	if err != nil {
+		return err
 	}
 
 	return UpdateAlert(alertId, newTargets)
