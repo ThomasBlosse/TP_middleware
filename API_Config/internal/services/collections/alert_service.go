@@ -129,3 +129,22 @@ func PostAlert(alert models.Alerts) error {
 
 	return InsertAlert(alert)
 }
+
+func UpdateAlert(alertId uuid.UUID, newTargets interface{}) error {
+	err := alerts.PutAlert(alertId, newTargets)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Alert not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error updating alert: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
