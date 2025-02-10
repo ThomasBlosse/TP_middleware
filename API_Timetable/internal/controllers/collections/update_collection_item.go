@@ -5,7 +5,6 @@ import (
 	"API_Timetable/internal/services/collections"
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
@@ -24,17 +23,16 @@ import (
 func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
-	newStart, _ := ctx.Value("start").(time.Time)
-	newEnd, _ := ctx.Value("end").(time.Time)
-	location, _ := ctx.Value("location").(string)
 
-	if err := json.NewDecoder(r.Body).Decode(&collectionId); err != nil {
+	var updatedItem models.Collection
+
+	if err := json.NewDecoder(r.Body).Decode(&updatedItem); err != nil {
 		logrus.Errorf("error decoding request body: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := collections.PutCollectionById(collectionId, newStart, newEnd, location)
+	err := collections.PutCollectionById(collectionId, updatedItem.Started, updatedItem.End, updatedItem.Location)
 	if err != nil {
 		logrus.Errorf("error updating item: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)

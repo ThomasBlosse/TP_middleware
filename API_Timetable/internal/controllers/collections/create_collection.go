@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,8 +27,6 @@ func CreateCollection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUUID := uuid.Must(uuid.NewV4())
-	newCollection.Id = &newUUID
 	err := collections.PostCollection(newCollection)
 	if err != nil {
 		logrus.Errorf("error adding collection: %s", err.Error())

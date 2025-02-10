@@ -21,7 +21,7 @@ import (
 // @Router       /collections/{id} [get]
 func GetCollection(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("Id").(uuid.UUID)
+	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
 	collection, err := collections.GetCollectionById(collectionId)
 	if err != nil {

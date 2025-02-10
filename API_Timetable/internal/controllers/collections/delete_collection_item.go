@@ -21,7 +21,7 @@ import (
 // @Router       /collections/{id}/items/{item_id} [delete]
 func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("Id").(uuid.UUID)
+	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
 	err := collections.DeleteCollectionById(collectionId)
 	if err != nil {
