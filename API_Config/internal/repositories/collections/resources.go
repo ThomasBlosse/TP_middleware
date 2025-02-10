@@ -1,8 +1,8 @@
 package collections
 
 import (
-	"API_Timetable/internal/helpers"
-	"API_Timetable/internal/models"
+	"API_Config/internal/helpers"
+	"API_Config/internal/models"
 	"github.com/gofrs/uuid"
 )
 
