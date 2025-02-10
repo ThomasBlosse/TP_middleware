@@ -67,3 +67,12 @@ func PostResource(resource models.Resources) error {
 
 	return nil
 }
+
+func DeleteResourceById(resourceId uuid.UUID) error {
+	db, err := helpers.OpenDb()
+	if err != nil {
+		return nil, err
+	}
+	_, err = db.Exec("DELETE FROM resources  WHERE if=?", resourceId.String())
+	return err
+}
