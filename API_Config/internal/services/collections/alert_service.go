@@ -6,6 +6,7 @@ import (
 	alerts "API_Config/internal/repositories/collections"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 func GetAllAlerts() ([]models.Alerts, error) {
@@ -60,4 +61,32 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 		}
 	}
 	return resourceAlerts, nil
+}
+
+func PostAlert(alert models.Alerts) error {
+	targetsMap, ok := alert.Targets.(map[string]interface{})
+	if !ok {
+		return &models.CustomError{
+			Message: 	"Invalid targets format",
+			Code:		http.StatusBadRequest
+		}
+	}
+
+	if allValue, allExists := targetsMap['all'];
+	if allExists{
+		all, ok := allValue.(bool)
+		if !ok || !all{
+			return &models.CustomError{
+				Message: 	"Invalid 'all' value",
+				Code:		http.StatusBadRequest
+			}
+		}
+
+		if len(targetsMap) > 1 {
+			return &models.CustomError{
+				Message: 	"'all' cannot be combined with other target"
+				Code:		http.StatusBadRequest
+			}
+		}
+	}
 }
