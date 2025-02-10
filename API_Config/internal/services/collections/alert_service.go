@@ -51,4 +51,20 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 			Code:    500,
 		}
 	}
+
+	resourceAlerts, err = alerts.GetAlertsByResource(resourceId)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return nil, &models.CustomError{
+				Message: "alerts not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error retrieving alerts: %s", err.Error())
+		return nil, &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+	return resourceAlerts, nil
 }
