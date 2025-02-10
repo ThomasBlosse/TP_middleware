@@ -151,3 +151,22 @@ func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
 
 	return UpdateAlert(alertId, newTargets)
 }
+
+func DeleteAlertById(alertId uuid.UUID) error {
+	err := alerts.DeleteAlertById(alertId)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Alert not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error deleting alert: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
+}
