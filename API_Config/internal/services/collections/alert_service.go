@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"API_Config/internal/helpers"
 	"API_Config/internal/models\"
 	alerts "API_Config/internal/repositories/collections"
 	"github.com/gofrs/uuid"
@@ -40,16 +41,8 @@ func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
 }
 
 func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
-	_, err := resource_service.GetResourceById(resourceId)
-	if err != nil {
-		if customErr, ok := err.(*models.CustomError); ok {
-			return nil, customErr
-		}
-		logrus.Errorf("error retrieving resource : %s", err.Error())
-		return nil, &models.CustomError{
-			Message: "Something went wrong",
-			Code:    500,
-		}
+	if err := helpers.CheckResourceExists(resourceId); err != nil {
+		return nil, err
 	}
 
 	resourceAlerts, err = alerts.GetAlertsByResource(resourceId)
