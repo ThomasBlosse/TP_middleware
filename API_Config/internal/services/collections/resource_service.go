@@ -23,7 +23,7 @@ func GetAllResources() ([]models.Resources, error) {
 }
 
 func GetResourceById(id uuid.UUID) (*models.Resources, error) {
-	resource, err := resources.GetCollectionById(id)
+	resource, err := resources.GetResourceById(id)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
@@ -42,7 +42,7 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 }
 
 func PostResource(resource models.Resources) error {
-	err := resources.PostCollection(resource)
+	err := resources.PostResource(resource)
 	if err != nil {
 		logrus.Errorf("error adding resource: %s", err.Error())
 		return &models.CustomError{
@@ -50,5 +50,24 @@ func PostResource(resource models.Resources) error {
 			Code:    http.StatusInternalServerError,
 		}
 	}
+	return nil
+}
+
+func DeleteResourceById(resourceId uuid.UUID) error {
+	err := repository.DeleteResourceById(resourceId)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Resource not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error deleting resource: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
 	return nil
 }
