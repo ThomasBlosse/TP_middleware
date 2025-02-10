@@ -93,3 +93,37 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]Alerts, error) {
 
 	return alerts, nil
 }
+
+func PostAlert(alert models.Alerts) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+
+	targetsJSON, err := json.Marshal(alert.Targets)
+	if err != nil {
+		return err
+	}
+
+	if alert.Id == nil {
+		newUUID, err := uuid.NewV4()
+		if err != nil {
+			return err
+		}
+		alert.Id = &newUUID
+	}
+
+	_, err = db.Exec("INSERT INTO alerts (email, targets, id) VALUES (?, ?, ?)",
+		alert.Email,
+		string(targetsJSON),
+		alert.Id.String(),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	helpers.CloseDB(db)
+
+	return nil
+}
