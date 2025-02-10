@@ -54,7 +54,7 @@ func PostResource(resource models.Resources) error {
 }
 
 func DeleteResourceById(resourceId uuid.UUID) error {
-	err := repository.DeleteResourceById(resourceId)
+	err := resources.DeleteResourceById(resourceId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
