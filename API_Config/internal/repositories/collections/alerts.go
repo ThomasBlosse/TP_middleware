@@ -143,5 +143,16 @@ func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
 		string(targetsJSON),
 		alertId.String(),
 	)
+	helpers.CloseDB()
+	return err
+}
+
+func DeleteAlertById(alertId uuid.UUID) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	_, err = db.Exec("DELETE FROM resources  WHERE if=?", alertId.String())
+	helpers.CloseDB()
 	return err
 }
