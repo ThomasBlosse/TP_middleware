@@ -1,5 +1,5 @@
 .idea/
-go.sum
-go.mod
-collection.db
-middleware_collection
+**/go.sum
+**/go.mod
+**/collection.db
+**/middleware_collection
