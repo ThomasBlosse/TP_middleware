@@ -32,6 +32,6 @@ func CreateAlert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	body, _ := json.Marshal(newCollection)
+	body, _ := json.Marshal(newAlert)
 	_, _ = w.Write(body)
 }
