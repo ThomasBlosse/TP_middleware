@@ -47,6 +47,22 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 	return &resource, nil
 }
 
+func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	row := db.QueryRow("SELECT * FROM resources WHERE UCA_ID=?", uid.String())
+	helpers.CloseDB(db)
+
+	var resource models.Resources
+	err := rows.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &resource, nil
+}
+
 func PostResource(resource models.Resources) error {
 	db, err := helpers.OpenDB()
 	if err != nil {

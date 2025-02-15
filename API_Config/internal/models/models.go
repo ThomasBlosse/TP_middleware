@@ -4,7 +4,7 @@ import "github.com/gofrs/uuid"
 
 type Resources struct {
 	Name string     `json:"name"`
-	Uid  string     `json:"UCA ID"`
+	Uid  string     `json:"UCA_ID"`
 	Id   *uuid.UUID `json:"id"`
 }
 
