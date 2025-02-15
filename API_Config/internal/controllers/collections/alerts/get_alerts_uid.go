@@ -11,13 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GetAlertUid(w http.ResponseWriter, r *http.Request) {
-	ucaIdParam := chi.URLParam(r, "uid")
+func GetAlertsUid(w http.ResponseWriter, r *http.Request) {
+	ucaIdParam := chi.URLParam(r, "targets")
 	ucaId, err := uuid.FromString(ucaIdParam)
 	if err != nil {
 		logrus.Errorf("parsing error : %s", err.Error())
 		customError := &models.CustomError{
-			Message: fmt.Sprintf("cannot parse uid (%s) as UUID", ucaIdParam),
+			Message: fmt.Sprintf("cannot parse targets (%s) as UUID", ucaIdParam),
 			Code:    http.StatusUnprocessableEntity,
 		}
 		w.WriteHeader(customError.Code)
@@ -26,7 +26,7 @@ func GetAlertUid(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	alert, err := alert_service.GetAlertsByResource(ucaId)
+	alerts, err := alert_service.GetAlertsByResource(ucaId)
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
@@ -46,6 +46,6 @@ func GetAlertUid(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	body, _ := json.Marshal(alert)
+	body, _ := json.Marshal(alerts)
 	_, _ = w.Write(body)
 }
