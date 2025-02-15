@@ -1,4 +1,4 @@
-package collections
+package alerts
 
 import (
 	"API_Config/internal/helpers"

@@ -1,8 +1,8 @@
-package collections
+package resources
 
 import (
 	"API_Config/internal/models\"
-	resources "API_Config/internal/repositories/collections"
+	repository "API_Config/internal/repositories/resources"
 	"database/sql"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllResources() ([]models.Resources, error) {
-	allResources, err := resources.GetAllResources()
+	allResources, err := repository.GetAllResources()
 	if err != nil {
 		logrus.Errorf("error retrieving all the resources : %s", err.Error())
 		return nil, &models.CustomError{
@@ -23,7 +23,7 @@ func GetAllResources() ([]models.Resources, error) {
 }
 
 func GetResourceById(id uuid.UUID) (*models.Resources, error) {
-	resource, err := resources.GetResourceById(id)
+	resource, err := repository.GetResourceById(id)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
@@ -31,7 +31,7 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 				Code:    http.StatusNotFound,
 			}
 		}
-		logrus.Errorf("error retrieving resources : %s", err.Error())
+		logrus.Errorf("error retrieving resource : %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
 			Code:    500,
@@ -42,7 +42,7 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 }
 
 func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
-	resource, err := resources.GetResourceByUid(uid)
+	resource, err := repository.GetResourceByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
@@ -50,7 +50,7 @@ func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 				Code:    http.StatusNotFound,
 			}
 		}
-		logrus.Errorf("error retrieving resources : %s", err.Error())
+		logrus.Errorf("error retrieving resource : %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
 			Code:    500,
@@ -61,7 +61,7 @@ func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 }
 
 func PostResource(resource models.Resources) error {
-	err := resources.PostResource(resource)
+	err := repository.PostResource(resource)
 	if err != nil {
 		logrus.Errorf("error adding resource: %s", err.Error())
 		return &models.CustomError{
@@ -73,7 +73,7 @@ func PostResource(resource models.Resources) error {
 }
 
 func DeleteResourceById(resourceId uuid.UUID) error {
-	err := resources.DeleteResourceById(resourceId)
+	err := repository.DeleteResourceById(resourceId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{

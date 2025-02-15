@@ -1,25 +1,25 @@
-package resources
+package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/collections/resource_service"
+	"API_Config/internal/services/alerts/service"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
-func CreateResource(w http.ResponseWriter, r *http.Request) {
-	var newResource models.Resources
+func CreateAlert(w http.ResponseWriter, r *http.Request) {
+	var newAlert models.Alerts
 
-	if err := json.NewDecoder(r.Body).Decode(&newResource); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&newAlert); err != nil {
 		logrus.Errorf("error decoding request body: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := resource_service.PostResource(newResource)
+	err := service.PostAlert(newAlert)
 	if err != nil {
-		logrus.Errorf("error adding resource: %s", err.Error())
+		logrus.Errorf("error adding alert: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {
 			w.WriteHeader(customError.Code)
@@ -32,6 +32,6 @@ func CreateResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	body, _ := json.Marshal(newResource)
+	body, _ := json.Marshal(newAlert)
 	_, _ = w.Write(body)
 }

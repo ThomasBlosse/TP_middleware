@@ -1,10 +1,9 @@
-package collections
+package controllers
 
 import (
 	"API_Config/internal/models"
 	"context"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"

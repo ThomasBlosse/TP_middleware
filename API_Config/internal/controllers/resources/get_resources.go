@@ -2,19 +2,15 @@ package resources
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/collections/resource_service"
+	"API_Config/internal/services/resources/service"
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
-func GetResource(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
-
-	collection, err := resource_service.GetResourceById(collectionId)
+func GetAlerts(w http.ResponseWriter, _ *http.Request) {
+	resources, err := service.GetAllResources()
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
@@ -29,6 +25,6 @@ func GetResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	body, _ := json.Marshal(collection)
+	body, _ := json.Marshal(resources)
 	_, _ = w.Write(body)
 }

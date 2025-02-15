@@ -2,7 +2,7 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/collections/alert_service"
+	"API_Config/internal/services/alerts/service"
 	"encoding/json"
 	"net/http"
 
@@ -14,7 +14,7 @@ func GetAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
-	collection, err := alert_service.GetAlertById(collectionId)
+	collection, err := service.GetAlertById(collectionId)
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)

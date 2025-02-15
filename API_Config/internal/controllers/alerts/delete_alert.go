@@ -1,20 +1,20 @@
-package resources
+package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/collections/resource_service"
+	"API_Config/internal/services/alerts/service"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
-func DeleteResource(w http.ResponseWriter, r *http.Request) {
+func DeleteAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
-	err := resource_service.DeleteResourceById(collectionId)
+	err := service.DeleteAlertById(collectionId)
 	if err != nil {
-		logrus.Errorf("error deleting resource: %s", err.Error())
+		logrus.Errorf("error deleting alert: %s", err.Error())
 
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {
@@ -28,6 +28,6 @@ func DeleteResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	body, _ := json.Marshal(map[string]string{"message": "Resource deleted successfully"})
+	body, _ := json.Marshal(map[string]string{"message": "Alert deleted successfully"})
 	_, _ = w.Write(body)
 }

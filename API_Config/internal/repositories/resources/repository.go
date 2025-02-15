@@ -1,4 +1,4 @@
-package collections
+package resources
 
 import (
 	"API_Config/internal/helpers"

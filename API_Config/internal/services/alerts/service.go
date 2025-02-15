@@ -1,16 +1,16 @@
-package collections
+package alerts
 
 import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models\"
-	alerts "API_Config/internal/repositories/collections"
+	repository "API_Config/internal/repositories/alerts"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func GetAllAlerts() ([]models.Alerts, error) {
-	allAlerts, err := alerts.GetAllAlerts()
+	allAlerts, err := repository.GetAllAlerts()
 	if err != nil {
 		logrus.Errorf("error retrieving all the alerts : %s", err.Error())
 		return nil, &models.CustomError{
@@ -23,7 +23,7 @@ func GetAllAlerts() ([]models.Alerts, error) {
 }
 
 func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
-	alert, err := alerts.GetAlertById(id)
+	alert, err := repository.GetAlertById(id)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
@@ -31,7 +31,7 @@ func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
 				Code:    http.StatusNotFound,
 			}
 		}
-		logrus.Errorf("error retrieving alerts : %s", err.Error())
+		logrus.Errorf("error retrieving alert : %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
 			Code:    500,
@@ -46,15 +46,15 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 		return nil, err
 	}
 
-	resourceAlerts, err = alerts.GetAlertsByResource(resourceId)
+	resourceAlerts, err = repository.GetAlertsByResource(resourceId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
-				Message: "alerts not found",
+				Message: "repository not found",
 				Code:    http.StatusNotFound,
 			}
 		}
-		logrus.Errorf("error retrieving alerts: %s", err.Error())
+		logrus.Errorf("error retrieving alert: %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
 			Code:    http.StatusInternalServerError,
@@ -64,7 +64,7 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 }
 
 func InsertAlert(alert models.Alerts) error {
-	err := alerts.PostAlert(alert)
+	err := repository.PostAlert(alert)
 	if err != nil {
 		logrus.Errorf("error adding alert: %s", err.Error())
 		return &models.CustomError{
@@ -105,7 +105,7 @@ func PostAlert(alert models.Alerts) error {
 }
 
 func UpdateAlert(alertId uuid.UUID, newTargets interface{}) error {
-	err := alerts.PutAlert(alertId, newTargets)
+	err := repository.PutAlert(alertId, newTargets)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
@@ -153,7 +153,7 @@ func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
 }
 
 func DeleteAlertById(alertId uuid.UUID) error {
-	err := alerts.DeleteAlertById(alertId)
+	err := repository.DeleteAlertById(alertId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{

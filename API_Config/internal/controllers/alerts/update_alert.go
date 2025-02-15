@@ -2,7 +2,7 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/collections/alert_service"
+	"API_Config/internal/services/alerts/service"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -20,7 +20,7 @@ func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := alert_service.PutAlert(collectionId, updatedAlert.Targets)
+	err := service.PutAlert(collectionId, updatedAlert.Targets)
 	if err != nil {
 		logrus.Errorf("error updating alert: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
