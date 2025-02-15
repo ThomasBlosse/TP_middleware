@@ -40,7 +40,7 @@ func GetResourceById(id uuid.UUID) (*models.Resources, error) {
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	err := rows.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	err := row.Scan(&resource.Name, &resource.Uid, &resource.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	err := rows.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	err := row.Scan(&resource.Name, &resource.Uid, &resource.Id)
 	if err != nil {
 		return nil, err
 	}
