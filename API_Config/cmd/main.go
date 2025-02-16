@@ -18,7 +18,6 @@ func main() {
 
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(alerts.Ctx)
-			r.Get("/", alerts.GetAlert)
 			r.Get("/", alerts.GetAlertsUid)
 			r.Put("/", alerts.UpdateAlert)
 			r.Delete("/", alerts.DeleteAlert)

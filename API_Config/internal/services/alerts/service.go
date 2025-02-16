@@ -4,6 +4,7 @@ import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models\"
 	repository "API_Config/internal/repositories/alerts"
+	"database/sql"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -20,25 +21,6 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	}
 
 	return allAlerts, nil
-}
-
-func GetAlertById(id uuid.UUID) (*models.Alerts, error) {
-	alert, err := repository.GetAlertById(id)
-	if err != nil {
-		if err.Error() == sql.ErrNoRows.Error() {
-			return nil, &models.CustomError{
-				Message: "alert not found",
-				Code:    http.StatusNotFound,
-			}
-		}
-		logrus.Errorf("error retrieving alert : %s", err.Error())
-		return nil, &models.CustomError{
-			Message: "Something went wrong",
-			Code:    500,
-		}
-	}
-
-	return alert, nil
 }
 
 func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
