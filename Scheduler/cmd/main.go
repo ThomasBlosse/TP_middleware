@@ -48,12 +48,14 @@ func main() {
 
 	resp, err = http.Get(url)
 	if err != nil {
-		logrus.Fatalf("Error while fetching calendar: %s", err.Error())
+		logrus.Fatalf("Error while fetching calendar data: %s", err.Error())
 	}
 
 	// Read all and store in value
 	rawData, err := io.ReadAll(resp.Body)
-	// TODO manage error
+	if err != nil {
+		logrus.Fatalf("Error while reading calendar data: %s", err.Error())
+	}
 
 	// Create a line-reader from data
 	scanner := bufio.NewScanner(bytes.NewReader(rawData))
