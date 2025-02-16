@@ -89,7 +89,11 @@ func main() {
 			continue
 		}
 
-		// TODO if multi-line data
+		// If multi-line data, add to the current key
+		if strings.HasPrefix(scanner.Text(), " ") {
+			currentEvent[currentKey] += strings.TrimSpace(scanner.Text())
+			continue
+		}
 
 		// Split scan
 		fmt.Println(scanner.Text())
