@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -28,4 +29,15 @@ func main() {
 	if err := json.Unmarshal(body, &resources); err != nil {
 		logrus.Fatalf("Error while unmarshalling resources: %s", err.Error())
 	}
+
+	var resourceToFetch strings.Builder
+
+	for i, resource := range resources {
+		if i > 0 {
+			resourceToFetch.WriteString(", ")
+		}
+		resourceToFetch.WriteString(resource.Uid)
+	}
+	formattedResources := resourceToFetch.String()
+
 }
