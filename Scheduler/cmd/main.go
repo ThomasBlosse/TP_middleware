@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
@@ -21,5 +22,10 @@ func main() {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Fatalf("Error while reading resources: %s", err.Error())
+	}
+
+	var resources []models.Resource
+	if err := json.Unmarshal(body, &resources); err != nil {
+		logrus.Fatalf("Error while unmarshalling resources: %s", err.Error())
 	}
 }
