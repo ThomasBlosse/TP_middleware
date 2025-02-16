@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"net/http"
 )
 
@@ -11,4 +12,8 @@ func main() {
 	}
 	defer resp.Body.Close()
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Fatalf("Error while reading resources: %s", err.Error())
+	}
 }
