@@ -22,25 +22,6 @@ func GetAllResources() ([]models.Resources, error) {
 	return allResources, nil
 }
 
-func GetResourceById(id uuid.UUID) (*models.Resources, error) {
-	resource, err := repository.GetResourceById(id)
-	if err != nil {
-		if err.Error() == sql.ErrNoRows.Error() {
-			return nil, &models.CustomError{
-				Message: "resource not found",
-				Code:    http.StatusNotFound,
-			}
-		}
-		logrus.Errorf("error retrieving resource : %s", err.Error())
-		return nil, &models.CustomError{
-			Message: "Something went wrong",
-			Code:    500,
-		}
-	}
-
-	return resource, nil
-}
-
 func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 	resource, err := repository.GetResourceByUid(uid)
 	if err != nil {

@@ -31,7 +31,6 @@ func main() {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(resources.Ctx)
 			r.Get("/", resources.GetResource)
-			r.Get("/", resources.GetResourceUid)
 			r.Delete("/", resources.DeleteResource)
 		})
 	})

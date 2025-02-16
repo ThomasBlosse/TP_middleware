@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GetAlerts(w http.ResponseWriter, _ *http.Request) {
+func GetResource(w http.ResponseWriter, _ *http.Request) {
 	resources, err := service.GetAllResources()
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())

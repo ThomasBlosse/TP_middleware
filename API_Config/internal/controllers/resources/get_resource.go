@@ -4,6 +4,7 @@ import (
 	"API_Config/internal/models"
 	"API_Config/internal/services/resources/service"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gofrs/uuid"
@@ -11,10 +12,21 @@ import (
 )
 
 func GetResource(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	ucaIdParam := chi.URLParam(r, "uid")
+	ucaId, err := uuid.FromString(ucaIdParam)
+	if err != nil {
+		logrus.Errorf("parsing error : %s", err.Error())
+		customError := &models.CustomError{
+			Message: fmt.Sprintf("cannot parse uid (%s) as UUID", ucaIdParam),
+			Code:    http.StatusUnprocessableEntity,
+		}
+		w.WriteHeader(customError.Code)
+		body, _ := json.Marshal(customError)
+		_, _ = w.Write(body)
+		return
+	}
 
-	collection, err := service.GetResourceById(collectionId)
+	resource, err := service.GetResourceByUid(ucaId)
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
@@ -24,11 +36,16 @@ func GetResource(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write(body)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
+			body, _ := json.Marshal(models.CustomError{
+				Message: "An internal server error occurred.",
+				Code:    http.StatusInternalServerError,
+			})
+			_, _ = w.Write(body)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	body, _ := json.Marshal(collection)
+	body, _ := json.Marshal(resource)
 	_, _ = w.Write(body)
 }
