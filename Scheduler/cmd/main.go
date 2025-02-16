@@ -81,7 +81,13 @@ func main() {
 			continue
 		}
 
-		// TODO if end event
+		// If end of event, store and reset
+		if scanner.Text() == "END:VEVENT" {
+			inEvent = false
+			eventArray = append(eventArray, currentEvent)
+			currentEvent = map[string]string{}
+			continue
+		}
 
 		// TODO if multi-line data
 
