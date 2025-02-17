@@ -172,6 +172,8 @@ func main() {
 			Location:    event["LOCATION"],
 			LastUpdate:  lastUpdate,
 		}
+
+		collections = append(collections, collection)
 		
 	}
 	
