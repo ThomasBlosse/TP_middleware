@@ -106,7 +106,17 @@ func main() {
 		currentEvent[currentKey] = currentValue
 	}
 
-	// TODO Transform to proper custom object
+	var resourceMapping = map[string]string{
+		"M1 GROUPE 1 LANGUE":  	"13295",
+		"M1 GROUPE 2 LANGUE":  	"13345",
+		"M1 GROUPE 3 LANGUE":  	"13397",
+		"M1 GROUPE 1 OPTION":  	"7224",
+		"M1 GROUPE 2 OPTION":  	"7225",
+		"M1 GROUPE 3 OPTION":  	"62962",
+		"M1 GROUPE OPTION":    	"62090",
+		"M1 -- Tutorat L2":     "56529",
+		"MASTER 1 INFO" : 		{"13295", "13345", "13397", "7224", "7225", "62962", "62090", "56529"},
+	}
 
 	var collections []models.Collection
 
@@ -116,7 +126,7 @@ func main() {
 			logrus.Warnf("Invalid DTSTART format: %s", event["DTSTART"])
 			continue
 		}
-
+ 
 		end, err := time.Parse("20060102T150405Z", event["DTEND"])
 		if err != nil {
 			logrus.Warnf("Invalid DTEND format: %s", event["DTEND"])
@@ -134,6 +144,36 @@ func main() {
 			logrus.Errorf("Error generating UUID: %s", err.Error())
 			continue
 		}
+
+		var resourceIds []*uuid.UUID
+		description := event["DESCRIPTION"]
+
+		for desc, resId := range resourceMapping {
+			if strings.Contains(description, desc) {
+				resUUID, err := uuid.Parse(resId)
+				if err == nil {
+					resourceIds = append(resourceIds, &resUUID)
+				} else {
+					logrus.Warnf("Invalid Resource UUID: %s", resId)
+				}
+			}
+		}
+
+
+
+		collection := models.Collection{
+			Id:          &newUUID,
+			ResourceIds: resourceIds,
+			Uid:         event["UID"],
+			Description: description,
+			Name:        event["SUMMARY"],
+			Started:     started,
+			End:         end,
+			Location:    event["LOCATION"],
+			LastUpdate:  lastUpdate,
+		}
+		
+	}
 	
 	}
 	// TODO parse to JSON and display
