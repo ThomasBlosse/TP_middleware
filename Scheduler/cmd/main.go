@@ -61,50 +61,9 @@ func main() {
 	// Create a line-reader from data
 	scanner := bufio.NewScanner(bytes.NewReader(rawData))
 
-	// Create vars
-	var eventArray []map[string]string
-	currentEvent := map[string]string{}
-
-	currentKey := ""
-	currentValue := ""
-
-	inEvent := false
-
-	// Inspect each line
-	for scanner.Scan() {
-		// Ignore calendar lines
-		if !inEvent && scanner.Text() != "BEGIN:VEVENT" {
-			continue
-		}
-		// If new event, go to next line
-		if scanner.Text() == "BEGIN:VEVENT" {
-			inEvent = true
-			continue
-		}
-
-		// If end of event, store and reset
-		if scanner.Text() == "END:VEVENT" {
-			inEvent = false
-			eventArray = append(eventArray, currentEvent)
-			currentEvent = map[string]string{}
-			continue
-		}
-
-		// If multi-line data, add to the current key
-		if strings.HasPrefix(scanner.Text(), " ") {
-			currentEvent[currentKey] += strings.TrimSpace(scanner.Text())
-			continue
-		}
-
-		// Split scan
-		fmt.Println(scanner.Text())
-		splitted := strings.SplitN(scanner.Text(), ":", 2)
-		currentKey = splitted[0]
-		currentValue = splitted[1]
-
-		// Store current event attribute
-		currentEvent[currentKey] = currentValue
-	}
+	
+	var eventArray, err := helpers.ParseICalEvents(rawData)
+	
 
 	var resourceMapping = map[string][]string{
 		"M1 GROUPE 1 LANGUE":  	{"13295"},
