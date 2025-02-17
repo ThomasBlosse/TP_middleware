@@ -2,14 +2,14 @@ package helpers
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/resource_service"
+	service "API_Config/internal/services/resources"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func CheckResourceExists(resourceId uuid.UUID) error {
-	_, err := resource_service.GetResourceById(resourceId)
+	_, err := service.GetResourceById(resourceId)
 	if err != nil {
 		if customErr, ok := err.(*models.CustomError); ok {
 			return customErr
@@ -43,7 +43,7 @@ func CheckingIfAllResourcesExist(targetsMap map[string]interface{}) error {
 					}
 				}
 
-				if err := helpers.CheckResourceExists(resourceUUID); err != nil {
+				if err := CheckResourceExists(resourceUUID); err != nil {
 					return err
 				}
 			}

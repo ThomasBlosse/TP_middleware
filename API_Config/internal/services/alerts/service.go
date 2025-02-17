@@ -2,7 +2,7 @@ package alerts
 
 import (
 	"API_Config/internal/helpers"
-	"API_Config/internal/models\"
+	"API_Config/internal/models"
 	repository "API_Config/internal/repositories/alerts"
 	"database/sql"
 	"github.com/gofrs/uuid"
@@ -28,7 +28,7 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 		return nil, err
 	}
 
-	resourceAlerts, err = repository.GetAlertsByResource(resourceId)
+	resourceAlerts, err := repository.GetAlertsByResource(resourceId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{

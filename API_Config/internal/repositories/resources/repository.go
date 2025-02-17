@@ -3,6 +3,7 @@ package resources
 import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models"
+
 	"github.com/gofrs/uuid"
 )
 
@@ -40,7 +41,7 @@ func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	err := row.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	err = row.Scan(&resource.Name, &resource.Uid, &resource.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -76,4 +77,19 @@ func DeleteResourceById(resourceId uuid.UUID) error {
 	_, err = db.Exec("DELETE FROM resources  WHERE if=?", resourceId.String())
 	helpers.CloseDB()
 	return err
+}
+
+func GetResourceById(id uuid.UUID) (*models.Resources, error) {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	row := db.QueryRow("SELECT * FROM resources WHERE id=?", id.String())
+	helpers.CloseDB(db)
+	var resource models.Resources
+	err = row.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &resource, nil
 }

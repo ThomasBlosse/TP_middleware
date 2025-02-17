@@ -3,9 +3,10 @@ package main
 import (
 	"API_Config/internal/controllers/alerts"
 	"API_Config/internal/controllers/resources"
-	"API_Timetable/internal/helpers"
+	"API_Config/internal/helpers"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 )
 
