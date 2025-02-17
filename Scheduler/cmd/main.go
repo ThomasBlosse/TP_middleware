@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"Sheduler/internal/models"
 )
 
 func main() {
@@ -107,6 +108,7 @@ func main() {
 
 	// TODO Transform to proper custom object
 
+	var collections []models.Collection
 	// TODO parse to JSON and display
 
 }
