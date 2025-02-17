@@ -109,6 +109,33 @@ func main() {
 	// TODO Transform to proper custom object
 
 	var collections []models.Collection
+
+	for _, event := range eventArray {
+		started, err := time.Parse("20060102T150405Z", event["DTSTART"])
+		if err != nil {
+			logrus.Warnf("Invalid DTSTART format: %s", event["DTSTART"])
+			continue
+		}
+
+		end, err := time.Parse("20060102T150405Z", event["DTEND"])
+		if err != nil {
+			logrus.Warnf("Invalid DTEND format: %s", event["DTEND"])
+			continue
+		}
+
+		lastUpdate, err := time.Parse("20060102T150405Z", event["LAST-MODIFIED"])
+		if err != nil {
+			logrus.Warnf("Invalid LAST-MODIFIED format: %s", event["LAST-MODIFIED"])
+			continue
+		}
+
+		newUUID, err := uuid.NewV4()
+		if err != nil {
+			logrus.Errorf("Error generating UUID: %s", err.Error())
+			continue
+		}
+	
+	}
 	// TODO parse to JSON and display
 
 }
