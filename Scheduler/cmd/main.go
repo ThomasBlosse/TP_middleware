@@ -106,15 +106,15 @@ func main() {
 		currentEvent[currentKey] = currentValue
 	}
 
-	var resourceMapping = map[string]string{
-		"M1 GROUPE 1 LANGUE":  	"13295",
-		"M1 GROUPE 2 LANGUE":  	"13345",
-		"M1 GROUPE 3 LANGUE":  	"13397",
-		"M1 GROUPE 1 OPTION":  	"7224",
-		"M1 GROUPE 2 OPTION":  	"7225",
-		"M1 GROUPE 3 OPTION":  	"62962",
-		"M1 GROUPE OPTION":    	"62090",
-		"M1 -- Tutorat L2":     "56529",
+	var resourceMapping = map[string][]string{
+		"M1 GROUPE 1 LANGUE":  	{"13295"},
+		"M1 GROUPE 2 LANGUE":  	{"13345"},
+		"M1 GROUPE 3 LANGUE":  	{"13397"},
+		"M1 GROUPE 1 OPTION":  	{"7224"},
+		"M1 GROUPE 2 OPTION":  	{"7225"},
+		"M1 GROUPE 3 OPTION":  	{"62962"},
+		"M1 GROUPE OPTION":    	{"62090"},
+		"M1 -- Tutorat L2":     {"56529"},
 		"MASTER 1 INFO" : 		{"13295", "13345", "13397", "7224", "7225", "62962", "62090", "56529"},
 	}
 
@@ -177,7 +177,10 @@ func main() {
 		
 	}
 	
+	jsonData, err := json.Marshal(collection)
+	if err != nil {
+		logrus.Fatalf("Error while marshalling collections: %s", err.Error())
 	}
-	// TODO parse to JSON and display
-
+	
+	fmt.Println(string(jsonData))
 }
