@@ -39,7 +39,7 @@ func init() {
 			id UUID PRIMARY KEY NOT NULL UNIQUE,
 			resourceIds TEXT NOT NULL,
 			uid VARCHAR(255) NOT NULL,
-			description TEXT NOT NULL,
+			description VARCHAR(255) NOT NULL,
 			name VARCHAR(255) NOT NULL,
 			started TIMESTAMP NOT NULL,
 			end TIMESTAMP NOT NULL,
