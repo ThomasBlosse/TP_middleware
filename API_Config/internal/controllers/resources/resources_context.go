@@ -1,4 +1,4 @@
-package controllers
+package resources
 
 import (
 	"API_Config/internal/models"
@@ -27,7 +27,7 @@ func Ctx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "collectionId", collectionId)
+		ctx := context.WithValue(r.Context(), "ResourcesId", collectionId)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -10,9 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func UpdateAlertItem(w http.ResponseWriter, r *http.Request) {
+func UpdateAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("AlertId").(uuid.UUID)
 
 	var updatedAlert models.Alerts
 

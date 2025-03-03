@@ -12,7 +12,7 @@ import (
 
 func DeleteAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("AlertId").(uuid.UUID)
 
 	err := service.DeleteAlertById(collectionId)
 	if err != nil {

@@ -12,7 +12,7 @@ import (
 
 func DeleteResource(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("ResourcesId").(uuid.UUID)
 
 	err := service.DeleteResourceById(collectionId)
 	if err != nil {
