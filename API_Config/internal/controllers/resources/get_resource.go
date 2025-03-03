@@ -2,11 +2,12 @@ package resources
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/resources/service"
+	service "API_Config/internal/services/resources"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )

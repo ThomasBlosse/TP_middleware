@@ -1,13 +1,13 @@
 package alerts
 
 import (
-	"API_Config/internal/helpers"
 	"API_Config/internal/models"
 	repository "API_Config/internal/repositories/alerts"
 	"database/sql"
+	"net/http"
+
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func GetAllAlerts() ([]models.Alerts, error) {
@@ -24,7 +24,7 @@ func GetAllAlerts() ([]models.Alerts, error) {
 }
 
 func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
-	if err := helpers.CheckResourceExists(resourceId); err != nil {
+	if err := checkResourceExists(resourceId); err != nil {
 		return nil, err
 	}
 
@@ -78,7 +78,7 @@ func PostAlert(alert models.Alerts) error {
 		}
 	}
 
-	err := helpers.CheckingIfAllResourcesExist(targetsMap)
+	err := checkingIfAllResourcesExist(targetsMap)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
 		}
 	}
 
-	err := helpers.CheckingIfAllResourcesExist(targetsMap)
+	err := checkingIfAllResourcesExist(targetsMap)
 	if err != nil {
 		return err
 	}

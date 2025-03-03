@@ -2,17 +2,19 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/alerts/service"
+	service "API_Config/internal/services/alerts"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
-func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
+func UpdateAlertItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
-	var updatedAlert models.Collection
+	var updatedAlert models.Alerts
 
 	if err := json.NewDecoder(r.Body).Decode(&updatedAlert); err != nil {
 		logrus.Errorf("error decoding request body: %s", err.Error())

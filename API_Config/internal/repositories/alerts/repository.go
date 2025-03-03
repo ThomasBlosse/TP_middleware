@@ -45,9 +45,9 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 	}
 	helpers.CloseDB(db)
 
-	var alerts []Alerts
+	var alerts []models.Alerts
 	for rows.Next() {
-		var alert Alerts
+		var alert models.Alerts
 		var targetsJSON string
 
 		err := rows.Scan(&alert.Email, &targetsJSON, &alert.Id)

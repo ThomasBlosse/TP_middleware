@@ -1,14 +1,15 @@
-package helpers
+package alerts
 
 import (
 	"API_Config/internal/models"
 	service "API_Config/internal/services/resources"
+	"net/http"
+
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
-func CheckResourceExists(resourceId uuid.UUID) error {
+func checkResourceExists(resourceId uuid.UUID) error {
 	_, err := service.GetResourceById(resourceId)
 	if err != nil {
 		if customErr, ok := err.(*models.CustomError); ok {
@@ -23,7 +24,7 @@ func CheckResourceExists(resourceId uuid.UUID) error {
 	return nil
 }
 
-func CheckingIfAllResourcesExist(targetsMap map[string]interface{}) error {
+func checkingIfAllResourcesExist(targetsMap map[string]interface{}) error {
 	if resources, exists := targetsMap["resources"]; exists {
 		if resourceList, ok := resources.([]interface{}); ok {
 			for _, resourceID := range resourceList {
@@ -43,7 +44,7 @@ func CheckingIfAllResourcesExist(targetsMap map[string]interface{}) error {
 					}
 				}
 
-				if err := CheckResourceExists(resourceUUID); err != nil {
+				if err := checkResourceExists(resourceUUID); err != nil {
 					return err
 				}
 			}

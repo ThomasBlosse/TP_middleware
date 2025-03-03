@@ -2,11 +2,12 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/alerts/service"
+	service "API_Config/internal/services/alerts"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
