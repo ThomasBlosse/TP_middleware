@@ -44,7 +44,7 @@ func init() {
 			started TIMESTAMP NOT NULL,
 			end TIMESTAMP NOT NULL,
 			location VARCHAR(255) NOT NULL,
-			lastupdate TIMESTAMP NOT NULL,
+			lastupdate TIMESTAMP NOT NULL
 		);`,
 	}
 	for _, scheme := range schemes {
