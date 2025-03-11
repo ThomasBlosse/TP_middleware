@@ -4,6 +4,8 @@ import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models"
 	"encoding/json"
+	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 )
@@ -13,7 +15,7 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := db.Query("SELECT * FROM alerts")
+	rows, err := db.Query("SELECT email, targets FROM alerts")
 	helpers.CloseDB(db)
 	if err != nil {
 		return nil, err
@@ -22,10 +24,13 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	alerts := []models.Alerts{}
 	for rows.Next() {
 		var alert models.Alerts
-		err := rows.Scan(&alert.Email, &alert.Targets, &alert.Id)
+		var targetsJSON string
+		err := rows.Scan(&alert.Email, &targetsJSON)
 		if err != nil {
 			return nil, err
 		}
+
+		alert.Targets = strings.Split(targetsJSON, ",")
 		alerts = append(alerts, alert)
 	}
 	_ = rows.Close()
@@ -33,49 +38,52 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	return alerts, nil
 }
 
-func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
+func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
 	}
+	defer helpers.CloseDB(db)
+	var alerts []models.Alerts
 
-	rows, err := db.Query("SELECT email, targets, id FROM alerts")
+	query := "SELECT email, targets FROM alerts WHERE targets LIKE ?"
+	rows, err := db.Query(query, "%"+strconv.Itoa(resourceId)+"%")
 	if err != nil {
 		return nil, err
 	}
-	helpers.CloseDB(db)
+	defer rows.Close()
 
-	var alerts []models.Alerts
 	for rows.Next() {
 		var alert models.Alerts
 		var targetsJSON string
-
-		err := rows.Scan(&alert.Email, &targetsJSON, &alert.Id)
+		err := rows.Scan(&alert.Email, &targetsJSON)
 		if err != nil {
 			return nil, err
 		}
 
-		var targetsMap map[string]interface{}
-		if err := json.Unmarshal([]byte(targetsJSON), &targetsMap); err != nil {
+		alerts = append(alerts, alert)
+	}
+
+	rows, err = db.Query("SELECT email, targets FROM alerts WHERE targets = 'all'")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var alert models.Alerts
+		var targetsJSON string
+		err := rows.Scan(&alert.Email, &targetsJSON)
+		if err != nil {
 			return nil, err
 		}
 
-		if allValue, exists := targetsMap["all"]; exists && allValue == true {
-			alerts = append(alerts, alert)
-		} else if resources, exists := targetsMap["resources"]; exists {
-			if resourceList, ok := resources.([]interface{}); ok {
-				for _, resource := range resourceList {
-					if resStr, ok := resource.(string); ok {
-						if resStr == resourceId.String() {
-							alerts = append(alerts, alert)
-							break
-						}
-					}
-				}
-			}
-		}
+		alerts = append(alerts, alert)
 	}
-	rows.Close()
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return alerts, nil
 }
@@ -86,23 +94,13 @@ func PostAlert(alert models.Alerts) error {
 		return err
 	}
 
-	targetsJSON, err := json.Marshal(alert.Targets)
-	if err != nil {
-		return err
-	}
-
-	if alert.Id == nil {
-		newUUID, err := uuid.NewV4()
-		if err != nil {
-			return err
-		}
-		alert.Id = &newUUID
-	}
+	targetsJSON := strings.Join(alert.Targets, ",")
+	Id, _ := uuid.NewV4()
 
 	_, err = db.Exec("INSERT INTO alerts (email, targets, id) VALUES (?, ?, ?)",
 		alert.Email,
-		string(targetsJSON),
-		alert.Id.String(),
+		targetsJSON,
+		Id,
 	)
 
 	if err != nil {
