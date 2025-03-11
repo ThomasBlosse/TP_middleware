@@ -47,8 +47,8 @@ func init() {
 		logrus.Fatalf("error while opening database : %s", err.Error())
 	}
 	schemes := []string{
-		`CREATE TABLE IF NOT EXISTS ressources (
-    		name TEXT NOT NULL,
+		`CREATE TABLE IF NOT EXISTS resources (
+    		name VARCHAR(255)  NOT NULL,
     		uid VARCHAR(255) NOT NULL,
 			id UUID PRIMARY KEY NOT NULL UNIQUE
     	);`,
