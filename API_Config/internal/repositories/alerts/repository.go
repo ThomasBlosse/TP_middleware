@@ -3,7 +3,6 @@ package alerts
 import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models"
-	"encoding/json"
 	"strconv"
 	"strings"
 
@@ -112,31 +111,28 @@ func PostAlert(alert models.Alerts) error {
 	return nil
 }
 
-func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
+func PutAlert(email string, newTargets []string) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 
-	targetsJSON, err := json.Marshal(newTargets)
-	if err != nil {
-		return err
-	}
+	targetsJSON := strings.Join(newTargets, ",")
 
-	_, err = db.Exec("UPDATE alerts SET targets = ? WHERE id = ?",
-		string(targetsJSON),
-		alertId.String(),
+	_, err = db.Exec("UPDATE alerts SET targets = ? WHERE email = ?",
+		targetsJSON,
+		email,
 	)
 	helpers.CloseDB(db)
 	return err
 }
 
-func DeleteAlertById(alertId uuid.UUID) error {
+func DeleteAlertByEmail(email string) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec("DELETE FROM resources  WHERE if=?", alertId.String())
+	_, err = db.Exec("DELETE FROM resources  WHERE email = ?", email)
 	helpers.CloseDB(db)
 	return err
 }
