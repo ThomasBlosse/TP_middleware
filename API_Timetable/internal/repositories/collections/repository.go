@@ -23,16 +23,10 @@ func GetAllCollections() ([]models.Collection, error) {
 	collections := []models.Collection{}
 	for rows.Next() {
 		var data models.Collection
-		var resourceIdsJson string
-		err = rows.Scan(&data.Id, &resourceIdsJson, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
+		err = rows.Scan(&data.Id, &data.ResourceIds, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
 		if err != nil {
 			return nil, err
 		}
-		resourceIds, errHelper := helpers.StringToUUIDSlice(resourceIdsJson)
-		if errHelper != nil {
-			return nil, errHelper
-		}
-		data.ResourceIds = resourceIds
 		collections = append(collections, data)
 	}
 	// don't forget to close rows
@@ -50,16 +44,10 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	helpers.CloseDB(db)
 
 	var collection models.Collection
-	var resourceIdsJson string
-	err = row.Scan(&collection.Id, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+	err = row.Scan(&collection.Id, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
 	}
-	resourceIds, errHelper := helpers.StringToUUIDSlice(resourceIdsJson)
-	if errHelper != nil {
-		return nil, errHelper
-	}
-	collection.ResourceIds = resourceIds
 	return &collection, err
 }
 
@@ -72,7 +60,7 @@ func PostCollection(collection models.Collection) error {
 
 	_, err = db.Exec("INSERT INTO collections (id, resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		collection.Id.String(),
-		helpers.UUIDSliceToString(collection.ResourceIds),
+		collection.ResourceIds,
 		collection.Uid,
 		collection.Description,
 		collection.Name,
