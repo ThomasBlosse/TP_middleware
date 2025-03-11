@@ -49,31 +49,12 @@ func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
 func PostAlert(alert models.Alerts) error {
 	targets := alert.Targets
 
-	if len(targets) != 1 {
-		for _, target := range targets {
-			if target == "all" {
-				return &models.CustomError{
-					Message: "If 'all' is present, no other resources should be specified",
-					Code:    http.StatusBadRequest,
-				}
-			}
-		}
+	resourceIds, err := checkingTargets(targets)
+	if err != nil {
+		return err
 	}
 
-	var resourceIds []int
-	for _, target := range targets {
-		resourceId, errConv := strconv.Atoi(target)
-		if errConv != nil {
-			logrus.Errorf("error converting target to int: %s", target)
-			return &models.CustomError{
-				Message: "Something went wrong",
-				Code:    http.StatusInternalServerError,
-			}
-		}
-		resourceIds = append(resourceIds, resourceId)
-	}
-
-	err := checkingIfAllResourcesExist(resourceIds)
+	err = checkingIfAllResourcesExist(resourceIds)
 	if err != nil {
 		return err
 	}
@@ -91,36 +72,26 @@ func PostAlert(alert models.Alerts) error {
 
 func PutAlert(email string, newTargets []string) error {
 
-	if len(newTargets) != 1 {
-		for _, target := range newTargets {
-			if target == "all" {
-				return &models.CustomError{
-					Message: "If 'all' is present, no other resources should be specified",
-					Code:    http.StatusBadRequest,
-				}
-			}
-		}
-	}
-
-	var resourceIds []int
-	for _, target := range targets {
-		resourceId, errConv := strconv.Atoi(target)
-		if errConv != nil {
-			logrus.Errorf("error converting target to int: %s", target)
-			return &models.CustomError{
-				Message: "Something went wrong",
-				Code:    http.StatusInternalServerError,
-			}
-		}
-		resourceIds = append(resourceIds, resourceId)
-	}
-
-	err := checkingIfAllResourcesExist(resourceIds)
+	resourceIds, err := checkingTargets(newTargets)
 	if err != nil {
 		return err
 	}
 
-	return UpdateAlert(email, newTargets)
+	err = checkingIfAllResourcesExist(resourceIds)
+	if err != nil {
+		return err
+	}
+
+	err = repository.PutAlert(email, newTargets)
+	if err != nil {
+		logrus.Errorf("error updating alert: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+
+	return nil
 }
 
 func DeleteAlertById(alertId uuid.UUID) error {
