@@ -17,7 +17,7 @@ func checkResourceExists(resourceId int) error {
 		logrus.Errorf("error retrieving resource: %s", err.Error())
 		return &models.CustomError{
 			Message: "Resource not found",
-			Code:    http.StatusNotFound,
+			Code:    http.StatusBadRequest,
 		}
 	}
 	return nil

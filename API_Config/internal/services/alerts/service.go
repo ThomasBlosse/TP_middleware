@@ -5,6 +5,7 @@ import (
 	repository "API_Config/internal/repositories/alerts"
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
@@ -23,7 +24,7 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	return allAlerts, nil
 }
 
-func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
+func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
 	if err := checkResourceExists(resourceId); err != nil {
 		return nil, err
 	}
@@ -45,8 +46,39 @@ func GetAlertsByResource(resourceId uuid.UUID) ([]models.Alerts, error) {
 	return resourceAlerts, nil
 }
 
-func InsertAlert(alert models.Alerts) error {
-	err := repository.PostAlert(alert)
+func PostAlert(alert models.Alerts) error {
+	targets := alert.Targets
+
+	if len(targets) != 1 {
+		for _, target := range targets {
+			if target == "all" {
+				return &models.CustomError{
+					Message: "If 'all' is present, no other resources should be specified",
+					Code:    http.StatusBadRequest,
+				}
+			}
+		}
+	}
+
+	var resourceIds []int
+	for _, target := range targets {
+		resourceId, errConv := strconv.Atoi(target)
+		if errConv != nil {
+			logrus.Errorf("error converting target to int: %s", target)
+			return &models.CustomError{
+				Message: "Something went wrong",
+				Code:    http.StatusInternalServerError,
+			}
+		}
+		resourceIds = append(resourceIds, resourceId)
+	}
+
+	err := checkingIfAllResourcesExist(resourceIds)
+	if err != nil {
+		return err
+	}
+
+	err = repository.PostAlert(alert)
 	if err != nil {
 		logrus.Errorf("error adding alert: %s", err.Error())
 		return &models.CustomError{
@@ -57,85 +89,42 @@ func InsertAlert(alert models.Alerts) error {
 	return nil
 }
 
-func PostAlert(alert models.Alerts) error {
-	targetsMap, ok := alert.Targets.(map[string]interface{})
-	if !ok {
-		return &models.CustomError{
-			Message: "Invalid targets format",
-			Code:    http.StatusBadRequest,
-		}
-	}
+func PutAlert(email string, newTargets []string) error {
 
-	if allValue, exists := targetsMap["all"]; exists {
-		if all, ok := allValue.(bool); ok && all {
-			if len(targetsMap) > 1 {
+	if len(newTargets) != 1 {
+		for _, target := range newTargets {
+			if target == "all" {
 				return &models.CustomError{
 					Message: "If 'all' is present, no other resources should be specified",
 					Code:    http.StatusBadRequest,
 				}
 			}
-			return InsertAlert(alert)
 		}
 	}
 
-	err := checkingIfAllResourcesExist(targetsMap)
-	if err != nil {
-		return err
-	}
-
-	return InsertAlert(alert)
-}
-
-func UpdateAlert(alertId uuid.UUID, newTargets interface{}) error {
-	err := repository.PutAlert(alertId, newTargets)
-	if err != nil {
-		if err.Error() == sql.ErrNoRows.Error() {
+	var resourceIds []int
+	for _, target := range targets {
+		resourceId, errConv := strconv.Atoi(target)
+		if errConv != nil {
+			logrus.Errorf("error converting target to int: %s", target)
 			return &models.CustomError{
-				Message: "Alert not found",
-				Code:    http.StatusNotFound,
+				Message: "Something went wrong",
+				Code:    http.StatusInternalServerError,
 			}
 		}
-		logrus.Errorf("error updating alert: %s", err.Error())
-		return &models.CustomError{
-			Message: "Something went wrong",
-			Code:    http.StatusInternalServerError,
-		}
+		resourceIds = append(resourceIds, resourceId)
 	}
 
-	return nil
-}
-
-func PutAlert(alertId uuid.UUID, newTargets interface{}) error {
-	targetsMap, ok := newTargets.(map[string]interface{})
-	if !ok {
-		return &models.CustomError{
-			Message: "Invalid targets format",
-			Code:    http.StatusBadRequest,
-		}
-	}
-
-	if allValue, exists := targetsMap["all"]; exists {
-		if all, ok := allValue.(bool); ok && all {
-			if len(targetsMap) > 1 {
-				return &models.CustomError{
-					Message: "If 'all' is present, no other resources should be specified",
-					Code:    http.StatusBadRequest,
-				}
-			}
-			return UpdateAlert(alertId, newTargets)
-		}
-	}
-
-	err := checkingIfAllResourcesExist(targetsMap)
+	err := checkingIfAllResourcesExist(resourceIds)
 	if err != nil {
 		return err
 	}
 
-	return UpdateAlert(alertId, newTargets)
+	return UpdateAlert(email, newTargets)
 }
 
 func DeleteAlertById(alertId uuid.UUID) error {
-	err := repository.DeleteAlertById(alertId)
+	err := repository.DeleteAlertByEmail(alertId)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
