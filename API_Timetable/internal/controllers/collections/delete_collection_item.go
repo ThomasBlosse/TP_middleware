@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,9 +20,9 @@ import (
 // @Router       /collections/{id}/items/{item_id} [delete]
 func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("collectionId").(string)
 
-	err := collections.DeleteCollectionById(collectionId)
+	err := collections.DeleteCollectionByUid(collectionId)
 	if err != nil {
 		logrus.Errorf("error deleting item: %s", err.Error())
 

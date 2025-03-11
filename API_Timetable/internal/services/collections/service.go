@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -59,8 +58,8 @@ func PostCollection(collection models.Collection) error {
 	return nil
 }
 
-func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, location string) error {
-	err := repository.PutCollectionById(collectionId, start, end, location)
+func PutCollectionByUid(uid string, start time.Time, end time.Time, location string) error {
+	err := repository.PutCollectionByUid(uid, start, end, location)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
@@ -78,8 +77,8 @@ func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, l
 	return nil
 }
 
-func DeleteCollectionById(collectionId uuid.UUID) error {
-	err := repository.DeleteCollectionById(collectionId)
+func DeleteCollectionByUid(uid string) error {
+	err := repository.DeleteCollectionByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{

@@ -80,19 +80,19 @@ func PostCollection(collection models.Collection) error {
 	return nil
 }
 
-func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, location string) error {
+func PutCollectionByUid(uid string, start time.Time, end time.Time, location string) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 	defer helpers.CloseDB(db)
 
-	_, err = db.Exec("UPDATE collections SET started=?, end=?, location=?, lastupdate=? WHERE collection_id=?",
+	_, err = db.Exec("UPDATE collections SET started=?, end=?, location=?, lastupdate=? WHERE uid=?",
 		start,
 		end,
 		location,
 		time.Now(),
-		collectionId.String(),
+		uid,
 	)
 
 	if err != nil {
@@ -102,14 +102,14 @@ func PutCollectionById(collectionId uuid.UUID, start time.Time, end time.Time, l
 	return nil
 }
 
-func DeleteCollectionById(collectionId uuid.UUID) error {
+func DeleteCollectionByUid(uid string) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	_, err = db.Exec("DELETE FROM collections WHERE collection_id=?", collectionId.String())
+	_, err = db.Exec("DELETE FROM collections WHERE uid=?", uid)
 
 	if err != nil {
 		return err

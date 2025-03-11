@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +21,7 @@ import (
 // @Router       /collections/{id}/items [put]
 func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("collectionId").(string)
 
 	var updatedItem models.Collection
 
@@ -32,7 +31,7 @@ func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := collections.PutCollectionById(collectionId, updatedItem.Started, updatedItem.End, updatedItem.Location)
+	err := collections.PutCollectionByUid(collectionId, updatedItem.Started, updatedItem.End, updatedItem.Location)
 	if err != nil {
 		logrus.Errorf("error updating item: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
