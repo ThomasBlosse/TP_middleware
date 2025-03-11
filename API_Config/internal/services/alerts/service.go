@@ -4,11 +4,8 @@ import (
 	"API_Config/internal/models"
 	repository "API_Config/internal/repositories/alerts"
 	"database/sql"
-	"net/http"
-	"strconv"
-
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 func GetAllAlerts() ([]models.Alerts, error) {
@@ -94,8 +91,8 @@ func PutAlert(email string, newTargets []string) error {
 	return nil
 }
 
-func DeleteAlertById(alertId uuid.UUID) error {
-	err := repository.DeleteAlertByEmail(alertId)
+func DeleteAlertByEmail(email string) error {
+	err := repository.DeleteAlertByEmail(email)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
