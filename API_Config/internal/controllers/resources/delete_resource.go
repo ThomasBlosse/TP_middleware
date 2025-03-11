@@ -6,15 +6,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func DeleteResource(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("ResourcesId").(uuid.UUID)
+	ucaId, _ := ctx.Value("ResourcesId").(int)
 
-	err := service.DeleteResourceById(collectionId)
+	err := service.DeleteResourceByUid(ucaId)
 	if err != nil {
 		logrus.Errorf("error deleting resource: %s", err.Error())
 
