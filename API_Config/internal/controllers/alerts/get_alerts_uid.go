@@ -6,19 +6,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func GetAlertsUid(w http.ResponseWriter, r *http.Request) {
 	ucaIdParam := chi.URLParam(r, "targets")
-	ucaId, err := uuid.FromString(ucaIdParam)
+	ucaId, err := strconv.Atoi(ucaIdParam)
 	if err != nil {
 		logrus.Errorf("parsing error : %s", err.Error())
 		customError := &models.CustomError{
-			Message: fmt.Sprintf("cannot parse targets (%s) as UUID", ucaIdParam),
+			Message: fmt.Sprintf("cannot parse targets (%s) as int", ucaIdParam),
 			Code:    http.StatusUnprocessableEntity,
 		}
 		w.WriteHeader(customError.Code)

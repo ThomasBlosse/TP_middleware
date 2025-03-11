@@ -6,13 +6,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func UpdateAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("AlertId").(uuid.UUID)
+	email, _ := ctx.Value("Email").(string)
 
 	var updatedAlert models.Alerts
 
@@ -22,7 +21,7 @@ func UpdateAlert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := service.PutAlert(collectionId, updatedAlert.Targets)
+	err := service.PutAlert(email, updatedAlert.Targets)
 	if err != nil {
 		logrus.Errorf("error updating alert: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)

@@ -6,15 +6,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func DeleteAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("AlertId").(uuid.UUID)
+	email, _ := ctx.Value("Email").(string)
 
-	err := service.DeleteAlertById(collectionId)
+	err := service.DeleteAlertByEmail(email)
 	if err != nil {
 		logrus.Errorf("error deleting alert: %s", err.Error())
 
