@@ -23,7 +23,7 @@ func GetAllCollections() ([]models.Collection, error) {
 	collections := []models.Collection{}
 	for rows.Next() {
 		var data models.Collection
-		err = rows.Scan(&data.Id, &data.ResourceIds, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
+		err = rows.Scan(&data.ResourceIds, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
 		if err != nil {
 			return nil, err
 		}
@@ -44,7 +44,7 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	helpers.CloseDB(db)
 
 	var collection models.Collection
-	err = row.Scan(&collection.Id, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+	err = row.Scan(&collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,7 @@ func PostCollection(collection models.Collection) error {
 	}
 	defer helpers.CloseDB(db)
 
-	_, err = db.Exec("INSERT INTO collections (id, resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		collection.Id.String(),
+	_, err = db.Exec("INSERT INTO collections (resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		collection.ResourceIds,
 		collection.Uid,
 		collection.Description,
