@@ -7,14 +7,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func Ctx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		collectionId, err := uuid.FromString(chi.URLParam(r, "id"))
+		alertId, err := uuid.FromString(chi.URLParam(r, "id"))
 		if err != nil {
 			logrus.Errorf("parsing error : %s", err.Error())
 			customError := &models.CustomError{
@@ -27,7 +27,7 @@ func Ctx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "AlertId", collectionId)
+		ctx := context.WithValue(r.Context(), "AlertId", alertId)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
