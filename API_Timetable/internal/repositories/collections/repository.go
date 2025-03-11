@@ -50,10 +50,16 @@ func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
 	helpers.CloseDB(db)
 
 	var collection models.Collection
-	err = row.Scan(&collection.Id, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+	var resourceIdsJson string
+	err = row.Scan(&collection.Id, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
 	}
+	resourceIds, errHelper := helpers.StringToUUIDSlice(resourceIdsJson)
+	if errHelper != nil {
+		return nil, errHelper
+	}
+	collection.ResourceIds = resourceIds
 	return &collection, err
 }
 
