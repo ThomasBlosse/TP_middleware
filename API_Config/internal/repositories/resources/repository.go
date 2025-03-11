@@ -21,7 +21,8 @@ func GetAllResources() ([]models.Resources, error) {
 	resources := []models.Resources{}
 	for rows.Next() {
 		var resource models.Resources
-		err := rows.Scan(&resource.Name, &resource.Uid, &resource.Id)
+		var tempId uuid.UUID
+		err := rows.Scan(&resource.Name, &resource.Uid, &tempId)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +42,8 @@ func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	err = row.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	var tempId uuid.UUID
+	err = row.Scan(&resource.Name, &resource.Uid, &tempId)
 	if err != nil {
 		return nil, err
 	}
@@ -54,10 +56,12 @@ func PostResource(resource models.Resources) error {
 		return err
 	}
 
+	Id, _ := uuid.NewV4()
+
 	_, err = db.Exec("INSERT INTO resources (name, uid, id) VALUES (?, ?, ?)",
 		resource.Name,
 		resource.Uid,
-		resource.Id.String(),
+		Id.String(),
 	)
 
 	if err != nil {
@@ -77,19 +81,4 @@ func DeleteResourceById(resourceId uuid.UUID) error {
 	_, err = db.Exec("DELETE FROM resources  WHERE id=?", resourceId.String())
 	helpers.CloseDB(db)
 	return err
-}
-
-func GetResourceById(id uuid.UUID) (*models.Resources, error) {
-	db, err := helpers.OpenDB()
-	if err != nil {
-		return nil, err
-	}
-	row := db.QueryRow("SELECT * FROM resources WHERE id=?", id.String())
-	helpers.CloseDB(db)
-	var resource models.Resources
-	err = row.Scan(&resource.Name, &resource.Uid, &resource.Id)
-	if err != nil {
-		return nil, err
-	}
-	return &resource, nil
 }
