@@ -13,7 +13,7 @@ func GetAllResources() ([]models.Resources, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := db.Query("SELECT * FROM resources")
+	rows, err := db.Query("SELECT name, uid FROM resources")
 	helpers.CloseDB(db)
 	if err != nil {
 		return nil, err
@@ -22,8 +22,7 @@ func GetAllResources() ([]models.Resources, error) {
 	resources := []models.Resources{}
 	for rows.Next() {
 		var resource models.Resources
-		var tempId uuid.UUID
-		err := rows.Scan(&resource.Name, &resource.Uid, &tempId)
+		err := rows.Scan(&resource.Name, &resource.Uid)
 		if err != nil {
 			return nil, err
 		}
@@ -39,12 +38,11 @@ func GetResourceByUid(uid int) (*models.Resources, error) {
 	if err != nil {
 		return nil, err
 	}
-	row := db.QueryRow("SELECT * FROM resources WHERE uid = ?", strconv.Itoa(uid))
+	row := db.QueryRow("SELECT name, uid FROM resources WHERE uid = ?", strconv.Itoa(uid))
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	var tempId uuid.UUID
-	err = row.Scan(&resource.Name, &resource.Uid, &tempId)
+	err = row.Scan(&resource.Name, &resource.Uid)
 	if err != nil {
 		return nil, err
 	}
