@@ -39,3 +39,18 @@ func UUIDSliceToString(uuids []*uuid.UUID) string {
 	return strings.Join(strUUIDs, ",")
 
 }
+
+func StringToUUIDSlice(s string) ([]*uuid.UUID, error) {
+	parts := strings.Split(s, ",")
+	var uuids []*uuid.UUID
+
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		uuid, err := uuid.FromString(part)
+		if err != nil {
+			return nil, err
+		}
+		uuids = append(uuids, &uuid)
+	}
+	return uuids, nil
+}
