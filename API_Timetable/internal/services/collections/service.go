@@ -27,8 +27,8 @@ func GetAllCollections() ([]models.Collection, error) {
 	return collections, nil
 }
 
-func GetCollectionById(id uuid.UUID) (*models.Collection, error) {
-	collection, err := repository.GetCollectionByUid(id)
+func GetCollectionByUid(uid string) (*models.Collection, error) {
+	collection, err := repository.GetCollectionByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
