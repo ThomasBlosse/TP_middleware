@@ -61,7 +61,7 @@ func init() {
 
 	schemes = []string{
 		`CREATE TABLE IF NOT EXISTS alerts (
-    		email VARCHAR(255) NOT NULL,
+    		email VARCHAR(255) NOT NULL UNIQUE,
     		targets TEXT NOT NULL,
 			id UUID PRIMARY KEY NOT NULL UNIQUE
     	);`,
