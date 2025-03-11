@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +22,7 @@ func GetAllResources() ([]models.Resources, error) {
 	return allResources, nil
 }
 
-func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
+func GetResourceByUid(uid int) (*models.Resources, error) {
 	resource, err := repository.GetResourceByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
@@ -54,8 +53,8 @@ func PostResource(resource models.Resources) error {
 	return nil
 }
 
-func DeleteResourceById(resourceId uuid.UUID) error {
-	err := repository.DeleteResourceById(resourceId)
+func DeleteResourceByUid(uid int) error {
+	err := repository.DeleteResourceByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
@@ -71,22 +70,4 @@ func DeleteResourceById(resourceId uuid.UUID) error {
 	}
 
 	return nil
-}
-
-func GetResourceById(id uuid.UUID) (*models.Resources, error) {
-	resource, err := repository.GetResourceById(id)
-	if err != nil {
-		if err.Error() == sql.ErrNoRows.Error() {
-			return nil, &models.CustomError{
-				Message: "resource not found",
-				Code:    http.StatusNotFound,
-			}
-		}
-		logrus.Errorf("error retrieving resource : %s", err.Error())
-		return nil, &models.CustomError{
-			Message: "Something went wrong",
-			Code:    500,
-		}
-	}
-	return resource, nil
 }
