@@ -49,7 +49,7 @@ func init() {
 	schemes := []string{
 		`CREATE TABLE IF NOT EXISTS resources (
     		name VARCHAR(255)  NOT NULL,
-    		uid VARCHAR(255) NOT NULL,
+    		uid INTEGER NOT NULL,
 			id UUID PRIMARY KEY NOT NULL UNIQUE
     	);`,
 	}
