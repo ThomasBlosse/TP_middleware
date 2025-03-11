@@ -3,7 +3,6 @@ package collections
 import (
 	"API_Timetable/internal/helpers"
 	"API_Timetable/internal/models"
-	"encoding/json"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -29,10 +28,9 @@ func GetAllCollections() ([]models.Collection, error) {
 		if err != nil {
 			return nil, err
 		}
-		var resourceIds []*uuid.UUID
-		err = json.Unmarshal([]byte(resourceIdsJson), &resourceIds)
-		if err != nil {
-			return nil, err
+		resourceIds, errHelper := helpers.StringToUUIDSlice(resourceIdsJson)
+		if errHelper != nil {
+			return nil, errHelper
 		}
 		data.ResourceIds = resourceIds
 		collections = append(collections, data)
