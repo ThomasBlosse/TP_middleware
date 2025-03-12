@@ -101,14 +101,9 @@ func PostAlert(alert models.Alerts) error {
 		targetsJSON,
 		Id,
 	)
-
-	if err != nil {
-		return err
-	}
-
 	helpers.CloseDB(db)
 
-	return nil
+	return err
 }
 
 func PutAlert(email string, newTargets []string) error {
