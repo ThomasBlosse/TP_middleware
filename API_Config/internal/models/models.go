@@ -1,15 +1,11 @@
 package models
 
-import "github.com/gofrs/uuid"
-
 type Resources struct {
-	Name string     `json:"name"`
-	Uid  string     `json:"uid"`
-	Id   *uuid.UUID `json:"id"`
+	Name string `json:"name"`
+	Uid  int    `json:"uid"`
 }
 
 type Alerts struct {
-	Email   string      `json:"email"`
-	Targets interface{} `json:"targets"`
-	Id      *uuid.UUID  `json:"id"`
+	Email   string   `json:"email"`
+	Targets []string `json:"targets"`
 }

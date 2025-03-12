@@ -2,10 +2,11 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/alerts/service"
+	service "API_Config/internal/services/alerts"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func CreateAlert(w http.ResponseWriter, r *http.Request) {

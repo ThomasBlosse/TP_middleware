@@ -3,9 +3,10 @@ package main
 import (
 	"API_Config/internal/controllers/alerts"
 	"API_Config/internal/controllers/resources"
-	"API_Timetable/internal/helpers"
+	"API_Config/internal/helpers"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 )
 
@@ -46,9 +47,9 @@ func init() {
 		logrus.Fatalf("error while opening database : %s", err.Error())
 	}
 	schemes := []string{
-		`CREATE TABLE IF NOT EXISTS ressources (
-    		name TEXT NOT NULL,
-    		uid VARCHAR(255) NOT NULL,
+		`CREATE TABLE IF NOT EXISTS resources (
+    		name VARCHAR(255)  NOT NULL,
+    		uid INTEGER NOT NULL,
 			id UUID PRIMARY KEY NOT NULL UNIQUE
     	);`,
 	}
@@ -60,7 +61,7 @@ func init() {
 
 	schemes = []string{
 		`CREATE TABLE IF NOT EXISTS alerts (
-    		email VARCHAR(255) NOT NULL,
+    		email VARCHAR(255) NOT NULL UNIQUE,
     		targets TEXT NOT NULL,
 			id UUID PRIMARY KEY NOT NULL UNIQUE
     	);`,

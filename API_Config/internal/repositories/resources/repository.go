@@ -3,6 +3,8 @@ package resources
 import (
 	"API_Config/internal/helpers"
 	"API_Config/internal/models"
+	"strconv"
+
 	"github.com/gofrs/uuid"
 )
 
@@ -11,7 +13,7 @@ func GetAllResources() ([]models.Resources, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := db.Query("SELECT * FROM resources")
+	rows, err := db.Query("SELECT name, uid FROM resources")
 	helpers.CloseDB(db)
 	if err != nil {
 		return nil, err
@@ -20,7 +22,7 @@ func GetAllResources() ([]models.Resources, error) {
 	resources := []models.Resources{}
 	for rows.Next() {
 		var resource models.Resources
-		err := rows.Scan(&resource.Name, &resource.Uid, &resource.Id)
+		err := rows.Scan(&resource.Name, &resource.Uid)
 		if err != nil {
 			return nil, err
 		}
@@ -31,16 +33,16 @@ func GetAllResources() ([]models.Resources, error) {
 	return resources, nil
 }
 
-func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
+func GetResourceByUid(uid int) (*models.Resources, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
 	}
-	row := db.QueryRow("SELECT * FROM resources WHERE uid = ?", uid.String())
+	row := db.QueryRow("SELECT name, uid FROM resources WHERE uid = ?", strconv.Itoa(uid))
 	helpers.CloseDB(db)
 
 	var resource models.Resources
-	err := row.Scan(&resource.Name, &resource.Uid, &resource.Id)
+	err = row.Scan(&resource.Name, &resource.Uid)
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +55,12 @@ func PostResource(resource models.Resources) error {
 		return err
 	}
 
+	Id, _ := uuid.NewV4()
+
 	_, err = db.Exec("INSERT INTO resources (name, uid, id) VALUES (?, ?, ?)",
 		resource.Name,
 		resource.Uid,
-		resource.Id.String(),
+		Id.String(),
 	)
 
 	if err != nil {
@@ -68,12 +72,12 @@ func PostResource(resource models.Resources) error {
 	return nil
 }
 
-func DeleteResourceById(resourceId uuid.UUID) error {
+func DeleteResourceByUid(uid int) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	_, err = db.Exec("DELETE FROM resources  WHERE if=?", resourceId.String())
-	helpers.CloseDB()
+	_, err = db.Exec("DELETE FROM resources  WHERE uid=?", strconv.Itoa(uid))
+	helpers.CloseDB(db)
 	return err
 }

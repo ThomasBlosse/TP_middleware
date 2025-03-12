@@ -2,17 +2,18 @@ package alerts
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/alerts/service"
+	service "API_Config/internal/services/alerts"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func DeleteAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	email, _ := ctx.Value("Email").(string)
 
-	err := service.DeleteAlertById(collectionId)
+	err := service.DeleteAlertByEmail(email)
 	if err != nil {
 		logrus.Errorf("error deleting alert: %s", err.Error())
 

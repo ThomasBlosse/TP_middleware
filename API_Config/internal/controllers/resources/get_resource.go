@@ -2,30 +2,16 @@ package resources
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/resources/service"
+	service "API_Config/internal/services/resources"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func GetResource(w http.ResponseWriter, r *http.Request) {
-	ucaIdParam := chi.URLParam(r, "uid")
-	ucaId, err := uuid.FromString(ucaIdParam)
-	if err != nil {
-		logrus.Errorf("parsing error : %s", err.Error())
-		customError := &models.CustomError{
-			Message: fmt.Sprintf("cannot parse uid (%s) as UUID", ucaIdParam),
-			Code:    http.StatusUnprocessableEntity,
-		}
-		w.WriteHeader(customError.Code)
-		body, _ := json.Marshal(customError)
-		_, _ = w.Write(body)
-		return
-	}
-
+	ctx := r.Context()
+	ucaId, _ := ctx.Value("resourceId").(int)
 	resource, err := service.GetResourceByUid(ucaId)
 	if err != nil {
 		logrus.Errorf("error : %s", err.Error())

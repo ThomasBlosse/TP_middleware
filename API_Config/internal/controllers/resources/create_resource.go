@@ -2,10 +2,11 @@ package resources
 
 import (
 	"API_Config/internal/models"
-	"API_Config/internal/services/resources/service"
+	service "API_Config/internal/services/resources"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func CreateResource(w http.ResponseWriter, r *http.Request) {

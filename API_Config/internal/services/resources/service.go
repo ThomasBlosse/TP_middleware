@@ -1,12 +1,12 @@
 package resources
 
 import (
-	"API_Config/internal/models\"
+	"API_Config/internal/models"
 	repository "API_Config/internal/repositories/resources"
 	"database/sql"
-	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func GetAllResources() ([]models.Resources, error) {
@@ -22,7 +22,7 @@ func GetAllResources() ([]models.Resources, error) {
 	return allResources, nil
 }
 
-func GetResourceByUid(uid uuid.UUID) (*models.Resources, error) {
+func GetResourceByUid(uid int) (*models.Resources, error) {
 	resource, err := repository.GetResourceByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
@@ -53,8 +53,8 @@ func PostResource(resource models.Resources) error {
 	return nil
 }
 
-func DeleteResourceById(resourceId uuid.UUID) error {
-	err := repository.DeleteResourceById(resourceId)
+func DeleteResourceByUid(uid int) error {
+	err := repository.DeleteResourceByUid(uid)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return &models.CustomError{
