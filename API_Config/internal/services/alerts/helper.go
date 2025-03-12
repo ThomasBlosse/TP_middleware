@@ -12,12 +12,8 @@ import (
 func checkResourceExists(resourceId int) error {
 	_, err := service.GetResourceByUid(resourceId)
 	if err != nil {
-		if customErr, ok := err.(*models.CustomError); ok {
-			return customErr
-		}
-		logrus.Errorf("error retrieving resource: %s", err.Error())
 		return &models.CustomError{
-			Message: "Resource not found",
+			Message: "Target not found",
 			Code:    http.StatusBadRequest,
 		}
 	}
