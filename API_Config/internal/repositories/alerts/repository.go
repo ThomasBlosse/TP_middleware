@@ -20,6 +20,36 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+	alerts := []models.Alerts{}
+
+	for rows.Next() {
+		var alert models.Alerts
+		var targetsJSON string
+		err := rows.Scan(&alert.Email, &targetsJSON)
+		if err != nil {
+			return nil, err
+		}
+
+		alert.Targets = strings.Split(targetsJSON, ",")
+		alerts = append(alerts, alert)
+	}
+
+	return alerts, nil
+}
+
+func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	defer helpers.CloseDB(db)
+
+	query := "SELECT email, targets FROM alerts WHERE targets LIKE ?"
+	rows, err := db.Query(query, "%"+strconv.Itoa(resourceId)+"%")
+	if err != nil {
+		return nil, err
+	}
 
 	alerts := []models.Alerts{}
 	for rows.Next() {
@@ -33,43 +63,14 @@ func GetAllAlerts() ([]models.Alerts, error) {
 		alert.Targets = strings.Split(targetsJSON, ",")
 		alerts = append(alerts, alert)
 	}
+
 	_ = rows.Close()
-
-	return alerts, nil
-}
-
-func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
-	db, err := helpers.OpenDB()
-	if err != nil {
-		return nil, err
-	}
-	defer helpers.CloseDB(db)
-	var alerts []models.Alerts
-
-	query := "SELECT email, targets FROM alerts WHERE targets LIKE ?"
-	rows, err := db.Query(query, "%"+strconv.Itoa(resourceId)+"%")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var alert models.Alerts
-		var targetsJSON string
-		err := rows.Scan(&alert.Email, &targetsJSON)
-		if err != nil {
-			return nil, err
-		}
-
-		alerts = append(alerts, alert)
-	}
 
 	rows, err = db.Query("SELECT email, targets FROM alerts WHERE targets = 'all'")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
 	for rows.Next() {
 		var alert models.Alerts
 		var targetsJSON string
@@ -78,6 +79,7 @@ func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
 			return nil, err
 		}
 
+		alert.Targets = []string{targetsJSON}
 		alerts = append(alerts, alert)
 	}
 
