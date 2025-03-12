@@ -44,6 +44,10 @@ func checkingTargets(targets []string) ([]int, error) {
 				}
 			}
 		}
+	} else {
+		if targets[0] == "all" {
+			return nil, nil
+		}
 	}
 
 	var resourceIds []int
