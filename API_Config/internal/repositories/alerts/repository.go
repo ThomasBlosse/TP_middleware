@@ -132,7 +132,7 @@ func DeleteAlertByEmail(email string) error {
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec("DELETE FROM resources  WHERE email = ?", email)
+	_, err = db.Exec("DELETE FROM alerts  WHERE email = ?", email)
 	helpers.CloseDB(db)
 	return err
 }
