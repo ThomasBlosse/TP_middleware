@@ -11,7 +11,7 @@ import (
 
 func DeleteResource(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	ucaId, _ := ctx.Value("ResourcesId").(int)
+	ucaId, _ := ctx.Value("resourceId").(int)
 
 	err := service.DeleteResourceByUid(ucaId)
 	if err != nil {
