@@ -14,8 +14,9 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer helpers.CloseDB(db)
 	rows, err := db.Query("SELECT email, targets FROM alerts")
-	helpers.CloseDB(db)
+
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +93,7 @@ func PostAlert(alert models.Alerts) error {
 	if err != nil {
 		return err
 	}
+	defer helpers.CloseDB(db)
 
 	targetsJSON := strings.Join(alert.Targets, ",")
 	Id, _ := uuid.NewV4()
@@ -101,7 +103,6 @@ func PostAlert(alert models.Alerts) error {
 		targetsJSON,
 		Id,
 	)
-	helpers.CloseDB(db)
 
 	return err
 }
@@ -111,6 +112,7 @@ func PutAlert(email string, newTargets []string) error {
 	if err != nil {
 		return err
 	}
+	defer helpers.CloseDB(db)
 
 	targetsJSON := strings.Join(newTargets, ",")
 
@@ -118,7 +120,7 @@ func PutAlert(email string, newTargets []string) error {
 		targetsJSON,
 		email,
 	)
-	helpers.CloseDB(db)
+
 	return err
 }
 
@@ -127,7 +129,8 @@ func DeleteAlertByEmail(email string) error {
 	if err != nil {
 		return err
 	}
+	defer helpers.CloseDB(db)
 	_, err = db.Exec("DELETE FROM alerts  WHERE email = ?", email)
-	helpers.CloseDB(db)
+
 	return err
 }
