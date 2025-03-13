@@ -44,7 +44,6 @@ func ParseICalEvents(rawData []byte) ([]map[string]string, error) {
 		}
 
 		// Split scan
-		fmt.Println(scanner.Text())
 		splitted := strings.SplitN(scanner.Text(), ":", 2)
 		currentKey = splitted[0]
 		currentValue = splitted[1]

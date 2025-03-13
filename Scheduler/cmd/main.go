@@ -75,5 +75,4 @@ func main() {
 		logrus.Fatalf("Error while marshalling collections: %s", err.Error())
 	}
 
-	fmt.Println(string(jsonData))
 }
