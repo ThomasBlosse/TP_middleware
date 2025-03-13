@@ -2,7 +2,6 @@ package main
 
 import (
 	"Scheduler/internal/models"
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
@@ -47,14 +46,7 @@ func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collec
 
 		for desc, resIds := range resourceMapping {
 			if strings.Contains(description, desc) {
-				for _, resId := range resIds {
-					resUUID, err := uuid.Parse(resId)
-					if err == nil {
-						resourceIds = append(resourceIds, &resUUID)
-					} else {
-						logrus.Warnf("Invalid Resource UUID: %s", resId)
-					}
-				}
+				resourceIds = append(resourceIds, resIds...)
 			}
 		}
 
