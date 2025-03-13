@@ -3,6 +3,8 @@ package collections
 import (
 	"API_Timetable/internal/helpers"
 	"API_Timetable/internal/models"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -21,13 +23,22 @@ func GetAllCollections() ([]models.Collection, error) {
 
 	collections := []models.Collection{}
 	for rows.Next() {
-		var data models.Collection
+		var collection models.Collection
 		var tempId uuid.UUID
-		err = rows.Scan(&tempId, &data.ResourceIds, &data.Uid, &data.Description, &data.Name, &data.Started, &data.End, &data.Location, &data.LastUpdate)
+		var resourceIdsJson string
+		err = rows.Scan(&tempId, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 		if err != nil {
 			return nil, err
 		}
-		collections = append(collections, data)
+		resourceIdsStr := strings.Split(resourceIdsJson, ",")
+		for _, resourceId := range resourceIdsStr {
+			resource, err := strconv.Atoi(resourceId)
+			if err != nil {
+				return nil, err
+			}
+			collection.ResourceIds = append(collection.ResourceIds, resource)
+		}
+		collections = append(collections, collection)
 	}
 	_ = rows.Close()
 
@@ -45,9 +56,18 @@ func GetCollectionByUid(uid string) (*models.Collection, error) {
 
 	var collection models.Collection
 	var tempId uuid.UUID
-	err = row.Scan(&tempId, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+	var resourceIdsJson string
+	err = row.Scan(&tempId, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
+	}
+	resourceIdsStr := strings.Split(resourceIdsJson, ",")
+	for _, resourceId := range resourceIdsStr {
+		resource, err := strconv.Atoi(resourceId)
+		if err != nil {
+			return nil, err
+		}
+		collection.ResourceIds = append(collection.ResourceIds, resource)
 	}
 	return &collection, err
 }
@@ -59,11 +79,17 @@ func PostCollection(collection models.Collection) error {
 	}
 	defer helpers.CloseDB(db)
 
+	var strResourceIds []string
+	for _, id := range collection.ResourceIds {
+		strResourceIds = append(strResourceIds, strconv.Itoa(id))
+	}
+
+	resourceIdsJson := strings.Join(strResourceIds, ",")
 	Id, _ := uuid.NewV4()
 
 	_, err = db.Exec("INSERT INTO collections (id, resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		Id,
-		collection.ResourceIds,
+		resourceIdsJson,
 		collection.Uid,
 		collection.Description,
 		collection.Name,
