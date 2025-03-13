@@ -24,12 +24,12 @@ func GetAllCollections() ([]models.Collection, error) {
 	for rows.Next() {
 		var collection models.Collection
 		var tempId uuid.UUID
-		var resourceJson string
-		err = rows.Scan(&tempId, &resourceJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+		var resourceIdsJson string
+		err = rows.Scan(&tempId, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 		if err != nil {
 			return nil, err
 		}
-		resourceIds := strings.Split(resourceJson, ",")
+		resourceIds := strings.Split(resourceIdsJson, ",")
 		collection.ResourceIds = make([]int, len(resourceIds))
 		collections = append(collections, collection)
 	}
@@ -49,10 +49,13 @@ func GetCollectionByUid(uid string) (*models.Collection, error) {
 
 	var collection models.Collection
 	var tempId uuid.UUID
-	err = row.Scan(&tempId, &collection.ResourceIds, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
+	var resourceIdsJson string
+	err = row.Scan(&tempId, &resourceIdsJson, &collection.Uid, &collection.Description, &collection.Name, &collection.Started, &collection.End, &collection.Location, &collection.LastUpdate)
 	if err != nil {
 		return nil, err
 	}
+	resourceIds := strings.Split(resourceIdsJson, ",")
+	collection.ResourceIds = make([]int, len(resourceIds))
 	return &collection, err
 }
 
