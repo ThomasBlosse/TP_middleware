@@ -38,7 +38,7 @@ func main() {
 
 	for i, resource := range resources {
 		if i > 0 {
-			resourceToFetch.WriteString(", ")
+			resourceToFetch.WriteString(",")
 		}
 		uidStr := strconv.Itoa(resource.Uid)
 		resourceToFetch.WriteString(uidStr)
