@@ -1,5 +1,6 @@
 .idea/
 **/go.sum
 **/go.mod
-**/collection.db
+**/config.db
 **/middleware_collection
+**/collections.db
