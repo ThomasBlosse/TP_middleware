@@ -37,7 +37,7 @@ func init() {
 	schemes := []string{
 		`CREATE TABLE IF NOT EXISTS collections (
 			id UUID PRIMARY KEY NOT NULL UNIQUE,
-			resourceIds INTEGER NOT NULL,
+			resourceIds TEXT NOT NULL,
 			uid VARCHAR(255) NOT NULL,
 			description VARCHAR(255) NOT NULL,
 			name VARCHAR(255) NOT NULL,
