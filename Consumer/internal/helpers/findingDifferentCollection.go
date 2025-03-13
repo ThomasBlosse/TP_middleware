@@ -18,7 +18,7 @@ func FindingDifferentCollection(collections []models.Collection) {
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode == http.StatusNotFound {
-			creatingCollection(collection, query)
+			creatingCollection(collection)
 			continue
 		}
 		var body []byte
@@ -35,7 +35,7 @@ func FindingDifferentCollection(collections []models.Collection) {
 
 }
 
-func creatingCollection(collection models.Collection, query string) {
+func creatingCollection(collection models.Collection) {
 	logrus.Infof("Collection not found, creating new collection")
 	body, err := json.Marshal(collection)
 	if err != nil {
