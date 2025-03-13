@@ -3,6 +3,7 @@ package collections
 import (
 	"API_Timetable/internal/helpers"
 	"API_Timetable/internal/models"
+	"strconv"
 	"strings"
 	"time"
 
@@ -66,11 +67,17 @@ func PostCollection(collection models.Collection) error {
 	}
 	defer helpers.CloseDB(db)
 
+	var strResourceIds []string
+	for _, id := range collection.ResourceIds {
+		strResourceIds = append(strResourceIds, strconv.Itoa(id))
+	}
+
+	resourceIdsJson := strings.Join(strResourceIds, ",")
 	Id, _ := uuid.NewV4()
 
 	_, err = db.Exec("INSERT INTO collections (id, resourceIds, uid, description, name, started, end, location, lastupdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		Id,
-		collection.ResourceIds,
+		resourceIdsJson,
 		collection.Uid,
 		collection.Description,
 		collection.Name,
