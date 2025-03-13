@@ -14,3 +14,8 @@ type Collection struct {
 	Location    string    `json:"location"`
 	LastUpdate  time.Time `json:"lastupdate"`
 }
+
+type Resources struct {
+	Name string `json:"name"`
+	Uid  int    `json:"uid"`
+}
