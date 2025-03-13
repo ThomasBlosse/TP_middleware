@@ -42,9 +42,7 @@ func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collec
 			continue
 		}
 
-		newUUID := uuid.New()
-
-		var resourceIds []*uuid.UUID
+		var resourceIds []int
 		description := event["DESCRIPTION"]
 
 		for desc, resIds := range resourceMapping {
