@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
+	"Scheduler/internal/helpers"
+	"Scheduler/inte
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"strings"
-	"Sheduler/internal/models"
 )
 
 func main() {
@@ -23,13 +22,13 @@ func main() {
 		body, _ := io.ReadAll(resp.Body)
 		logrus.Fatalf("Unexpected status code: %d - Response: %s", resp.StatusCode, string(body))
 	}
-
-	body, err := io.ReadAll(resp.Body)
+	var body []byte
+	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Fatalf("Error while reading resources: %s", err.Error())
 	}
 
-	var resources []models.Resource
+	var resources []models.Collection
 	if err := json.Unmarshal(body, &resources); err != nil {
 		logrus.Fatalf("Error while unmarshalling resources: %s", err.Error())
 	}
@@ -57,22 +56,22 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("Error while reading calendar data: %s", err.Error())
 	}
-	
-	var eventArray, err := helpers.ParseICalEvents(rawData)
+	var eventArray []map[string]string
+	eventArray, err = helpers.ParseICalEvents(rawData)
 	if err != nil {
 		logrus.Fatalf("Error parsing calendar: %s", err)
 	}
 
-
-	collections, err := ConvertEventsToCollections(eventArray)
+	var collections []models.Collection
+	collections, err = helpers.ConvertEventsToCollections(eventArray)
 	if err != nil {
 		logrus.Fatalf("Error converting events: %s", err)
 	}
-	
-	jsonData, err := json.Marshal(collection)
+
+	jsonData, err := json.Marshal(collections)
 	if err != nil {
 		logrus.Fatalf("Error while marshalling collections: %s", err.Error())
 	}
-	
+
 	fmt.Println(string(jsonData))
 }
