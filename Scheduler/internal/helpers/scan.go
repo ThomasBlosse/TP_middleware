@@ -1,3 +1,11 @@
+package main
+
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"strings"
+)
 
 func ParseICalEvents(rawData []byte) ([]map[string]string, error) {
 	scanner := bufio.NewScanner(bytes.NewReader(rawData))
@@ -5,6 +13,7 @@ func ParseICalEvents(rawData []byte) ([]map[string]string, error) {
 	var eventArray []map[string]string
 	currentEvent := map[string]string{}
 	currentKey := ""
+	currentValue := ""
 
 	inEvent := false
 
