@@ -13,7 +13,7 @@ import (
 )
 
 func GetAlertsUid(w http.ResponseWriter, r *http.Request) {
-	ucaIdParam := chi.URLParam(r, "targets")
+	ucaIdParam := chi.URLParam(r, "id")
 	ucaId, err := strconv.Atoi(ucaIdParam)
 	if err != nil {
 		logrus.Errorf("parsing error : %s", err.Error())

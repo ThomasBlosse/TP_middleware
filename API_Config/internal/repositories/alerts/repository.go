@@ -14,8 +14,39 @@ func GetAllAlerts() ([]models.Alerts, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer helpers.CloseDB(db)
 	rows, err := db.Query("SELECT email, targets FROM alerts")
-	helpers.CloseDB(db)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	alerts := []models.Alerts{}
+
+	for rows.Next() {
+		var alert models.Alerts
+		var targetsJSON string
+		err := rows.Scan(&alert.Email, &targetsJSON)
+		if err != nil {
+			return nil, err
+		}
+
+		alert.Targets = strings.Split(targetsJSON, ",")
+		alerts = append(alerts, alert)
+	}
+
+	return alerts, nil
+}
+
+func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	defer helpers.CloseDB(db)
+
+	query := "SELECT email, targets FROM alerts WHERE targets LIKE ?"
+	rows, err := db.Query(query, "%"+strconv.Itoa(resourceId)+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -32,43 +63,14 @@ func GetAllAlerts() ([]models.Alerts, error) {
 		alert.Targets = strings.Split(targetsJSON, ",")
 		alerts = append(alerts, alert)
 	}
+
 	_ = rows.Close()
-
-	return alerts, nil
-}
-
-func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
-	db, err := helpers.OpenDB()
-	if err != nil {
-		return nil, err
-	}
-	defer helpers.CloseDB(db)
-	var alerts []models.Alerts
-
-	query := "SELECT email, targets FROM alerts WHERE targets LIKE ?"
-	rows, err := db.Query(query, "%"+strconv.Itoa(resourceId)+"%")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var alert models.Alerts
-		var targetsJSON string
-		err := rows.Scan(&alert.Email, &targetsJSON)
-		if err != nil {
-			return nil, err
-		}
-
-		alerts = append(alerts, alert)
-	}
 
 	rows, err = db.Query("SELECT email, targets FROM alerts WHERE targets = 'all'")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
 	for rows.Next() {
 		var alert models.Alerts
 		var targetsJSON string
@@ -77,6 +79,7 @@ func GetAlertsByResource(resourceId int) ([]models.Alerts, error) {
 			return nil, err
 		}
 
+		alert.Targets = []string{targetsJSON}
 		alerts = append(alerts, alert)
 	}
 
@@ -92,6 +95,7 @@ func PostAlert(alert models.Alerts) error {
 	if err != nil {
 		return err
 	}
+	defer helpers.CloseDB(db)
 
 	targetsJSON := strings.Join(alert.Targets, ",")
 	Id, _ := uuid.NewV4()
@@ -102,13 +106,7 @@ func PostAlert(alert models.Alerts) error {
 		Id,
 	)
 
-	if err != nil {
-		return err
-	}
-
-	helpers.CloseDB(db)
-
-	return nil
+	return err
 }
 
 func PutAlert(email string, newTargets []string) error {
@@ -116,6 +114,7 @@ func PutAlert(email string, newTargets []string) error {
 	if err != nil {
 		return err
 	}
+	defer helpers.CloseDB(db)
 
 	targetsJSON := strings.Join(newTargets, ",")
 
@@ -123,7 +122,7 @@ func PutAlert(email string, newTargets []string) error {
 		targetsJSON,
 		email,
 	)
-	helpers.CloseDB(db)
+
 	return err
 }
 
@@ -132,7 +131,8 @@ func DeleteAlertByEmail(email string) error {
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec("DELETE FROM resources  WHERE email = ?", email)
-	helpers.CloseDB(db)
+	defer helpers.CloseDB(db)
+	_, err = db.Exec("DELETE FROM alerts  WHERE email = ?", email)
+
 	return err
 }

@@ -50,6 +50,17 @@ func PostAlert(alert models.Alerts) error {
 	if err != nil {
 		return err
 	}
+	if resourceIds == nil {
+		err = repository.PostAlert(alert)
+		if err != nil {
+			logrus.Errorf("error adding alert: %s", err.Error())
+			return &models.CustomError{
+				Message: "Something went wrong",
+				Code:    http.StatusInternalServerError,
+			}
+		}
+		return nil
+	}
 
 	err = checkingIfAllResourcesExist(resourceIds)
 	if err != nil {
