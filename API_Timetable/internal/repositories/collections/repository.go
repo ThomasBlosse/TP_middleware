@@ -61,8 +61,14 @@ func GetCollectionByUid(uid string) (*models.Collection, error) {
 	if err != nil {
 		return nil, err
 	}
-	resourceIds := strings.Split(resourceIdsJson, ",")
-	collection.ResourceIds = make([]int, len(resourceIds))
+	resourceIdsStr := strings.Split(resourceIdsJson, ",")
+	for _, resourceId := range resourceIdsStr {
+		resource, err := strconv.Atoi(resourceId)
+		if err != nil {
+			return nil, err
+		}
+		collection.ResourceIds = append(collection.ResourceIds, resource)
+	}
 	return &collection, err
 }
 
