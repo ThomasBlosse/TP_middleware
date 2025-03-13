@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -28,7 +29,7 @@ func main() {
 		logrus.Fatalf("Error while reading resources: %s", err.Error())
 	}
 
-	var resources []models.Collection
+	var resources []models.Resources
 	if err := json.Unmarshal(body, &resources); err != nil {
 		logrus.Fatalf("Error while unmarshalling resources: %s", err.Error())
 	}
@@ -39,7 +40,8 @@ func main() {
 		if i > 0 {
 			resourceToFetch.WriteString(", ")
 		}
-		resourceToFetch.WriteString(resource.Uid)
+		uidStr := strconv.Itoa(resource.Uid)
+		resourceToFetch.WriteString(uidStr)
 	}
 	formattedResources := resourceToFetch.String()
 
