@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func FindingDifferentCollection(collections []models.Collection) {
+func GeneratingNotification(collections []models.Collection) []models.Notification {
 	var notifications []models.Notification
 	for _, collection := range collections {
 		different := false
@@ -50,7 +50,7 @@ func FindingDifferentCollection(collections []models.Collection) {
 			updateCollection(collection, query)
 		}
 	}
-
+	return notifications
 }
 
 func creatingCollection(collection models.Collection) {
