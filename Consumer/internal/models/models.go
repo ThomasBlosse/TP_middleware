@@ -14,3 +14,10 @@ type Collection struct {
 	Location    string    `json:"location"`
 	LastUpdate  time.Time `json:"lastupdate"`
 }
+
+type Notification struct {
+	ResourceIds []int  `json:"resourceIds"`
+	Description string `json:"description"`
+	OldValue    string `json:"oldvalue"`
+	NewValue    string `json:"newvalue"`
+}
