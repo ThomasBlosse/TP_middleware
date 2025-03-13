@@ -2,7 +2,7 @@ package main
 
 import (
 	"Scheduler/internal/helpers"
-	"Scheduler/inte
+	"Scheduler/internal/models"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
