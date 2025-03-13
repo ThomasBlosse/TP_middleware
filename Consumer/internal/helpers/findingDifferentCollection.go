@@ -39,18 +39,18 @@ func creatingCollection(collection models.Collection, query string) {
 	logrus.Infof("Collection not found, creating new collection")
 	body, err := json.Marshal(collection)
 	if err != nil {
-		logrus.Fatalf("Error while marshalling collection: %s", err.Error())
+		logrus.Errorf("Error while marshalling collection: %s", err.Error())
 	}
 
 	createResp, err := http.Post(query, "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		logrus.Fatalf("Error while creating collection: %s", err.Error())
+		logrus.Errorf("Error while creating collection: %s", err.Error())
 	}
 	defer createResp.Body.Close()
 
 	if createResp.StatusCode != http.StatusCreated {
 		body, _ := io.ReadAll(createResp.Body)
-		logrus.Fatalf("Failed to create collection. Status: %d - Response: %s", createResp.StatusCode, string(body))
+		logrus.Errorf("Failed to create collection. Status: %d - Response: %s", createResp.StatusCode, string(body))
 	}
 
 }
