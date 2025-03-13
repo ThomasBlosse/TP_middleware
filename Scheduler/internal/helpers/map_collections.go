@@ -9,9 +9,9 @@ import (
 
 func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collection, error) {
 	var resourceMapping = map[string][]int{
-		"M1 GROUPE 1 LANGUE": {13295},
-		"M1 GROUPE 2 LANGUE": {13345},
-		"M1 GROUPE 3 LANGUE": {13397},
+		"M1 GROUPE 1 langue": {13295},
+		"M1 GROUPE 2 langue": {13345},
+		"M1 GROUPE 3 langue": {13397},
 		"M1 GROUPE 1 OPTION": {7224},
 		"M1 GROUPE 2 OPTION": {7225},
 		"M1 GROUPE 3 OPTION": {62962},
