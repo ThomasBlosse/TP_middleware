@@ -1,24 +1,23 @@
-package main
+package helpers
 
 import (
 	"Scheduler/internal/models"
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )
 
 func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collection, error) {
-	var resourceMapping = map[string][]string{
-		"M1 GROUPE 1 LANGUE": {"13295"},
-		"M1 GROUPE 2 LANGUE": {"13345"},
-		"M1 GROUPE 3 LANGUE": {"13397"},
-		"M1 GROUPE 1 OPTION": {"7224"},
-		"M1 GROUPE 2 OPTION": {"7225"},
-		"M1 GROUPE 3 OPTION": {"62962"},
-		"M1 GROUPE OPTION":   {"62090"},
-		"M1 -- Tutorat L2":   {"56529"},
-		"MASTER 1 INFO":      {"13295", "13345", "13397", "7224", "7225", "62962", "62090", "56529"},
+	var resourceMapping = map[string][]int{
+		"M1 GROUPE 1 langue": {13295},
+		"M1 GROUPE 2 langue": {13345},
+		"M1 GROUPE 3 langue": {13397},
+		"M1 Groupe 1 option": {7224},
+		"M1 Groupe 2 option": {7225},
+		"M1 Groupe 3 option": {62962},
+		"M1 Groupe option":   {62090},
+		"M1 -- Tutorat L2":   {56529},
+		"MASTER 1 INFO":      {13295, 13345, 13397, 7224, 7225, 62962, 62090, 56529},
 	}
 
 	var collections []models.Collection
@@ -42,26 +41,16 @@ func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collec
 			continue
 		}
 
-		newUUID := uuid.New()
-
-		var resourceIds []*uuid.UUID
+		var resourceIds []int
 		description := event["DESCRIPTION"]
 
 		for desc, resIds := range resourceMapping {
 			if strings.Contains(description, desc) {
-				for _, resId := range resIds {
-					resUUID, err := uuid.Parse(resId)
-					if err == nil {
-						resourceIds = append(resourceIds, &resUUID)
-					} else {
-						logrus.Warnf("Invalid Resource UUID: %s", resId)
-					}
-				}
+				resourceIds = append(resourceIds, resIds...)
 			}
 		}
 
 		collection := models.Collection{
-			Id:          &newUUID,
 			ResourceIds: resourceIds,
 			Uid:         event["UID"],
 			Description: description,

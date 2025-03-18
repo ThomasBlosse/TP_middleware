@@ -5,7 +5,7 @@ import (
 )
 
 type Collection struct {
-	ResourceIds int       `json:"resourceIds"`
+	ResourceIds []int     `json:"resourceIds"`
 	Uid         string    `json:"uid"`
 	Description string    `json:"description"`
 	Name        string    `json:"name"`
@@ -13,4 +13,9 @@ type Collection struct {
 	End         time.Time `json:"end"`
 	Location    string    `json:"location"`
 	LastUpdate  time.Time `json:"lastupdate"`
+}
+
+type Resources struct {
+	Name string `json:"name"`
+	Uid  int    `json:"uid"`
 }
