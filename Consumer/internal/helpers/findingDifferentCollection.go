@@ -15,7 +15,7 @@ func GeneratingNotification(collections []models.Collection) []models.Notificati
 	var notifications []models.Notification
 	for _, collection := range collections {
 		different := false
-		query := "http://localhost:8080/collections/" + collection.Uid
+		query := "http://localhost:8081/collections/" + collection.Uid
 		resp, err := http.Get(query)
 		if err != nil {
 			logrus.Fatalf("Error while fetching collection: %s", err.Error())
