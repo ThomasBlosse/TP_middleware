@@ -5,14 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sirupsen/logrus"
-	"sync"
 	"time"
 )
 
-func StartConsumer() []models.Collection {
+func StartConsumer() error {
 	nc, _ := nats.Connect(nats.DefaultURL)
 	defer nc.Close()
 
@@ -76,46 +76,27 @@ func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
 	return &consumer, nil
 }
 
-func consume(consumer jetstream.Consumer) []models.Collection {
-	var receivedCollections []models.Collection
-	collectionsChan := make(chan models.Collection, 100)
-	done := make(chan struct{})
-	var wg sync.WaitGroup
-
+func consume(consumer jetstream.Consumer) error {
 	cc, err := consumer.Consume(func(msg jetstream.Msg) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			var collection models.Collection
+		var receivedCollections []models.Collection
 
-			err := json.Unmarshal(msg.Data(), &collection)
-			if err != nil {
-				logrus.Errorf("Error unmarshalling collection data: %v", err)
-				return
-			}
+		err := json.Unmarshal(msg.Data(), &receivedCollections)
+		if err != nil {
+			logrus.Fatalf("Error unmarshalling collection data: %v", err)
+		}
 
-			receivedCollections = append(receivedCollections, collection)
+		fmt.Println("Collection received")
 
-			_ = msg.Ack()
-		}()
+		notifications := GeneratingNotification(receivedCollections)
+
+		fmt.Println(notifications)
+
+		logrus.Debug(string(msg.Data()))
+		_ = msg.Ack()
 	})
 
-	if err != nil {
-		logrus.Errorf("Error consuming messages: %v", err)
-		return nil
-	}
-
-	go func() {
-		wg.Wait()
-		close(collectionsChan)
-		close(done)
-	}()
-	for collection := range collectionsChan {
-		receivedCollections = append(receivedCollections, collection)
-	}
-
-	<-done
+	<-cc.Closed()
 	cc.Stop()
 
-	return receivedCollections
+	return err
 }

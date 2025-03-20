@@ -8,9 +8,7 @@ import (
 func main() {
 
 	collections := helpers.StartConsumer()
+	fmt.Println(collections)
 
-	notifications := helpers.GeneratingNotification(collections)
-
-	fmt.Println(notifications)
 	//TODO send notifiation to alerter
 }

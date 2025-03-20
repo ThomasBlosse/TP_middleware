@@ -60,7 +60,7 @@ func creatingCollection(collection models.Collection) {
 		logrus.Errorf("Error while marshalling collection: %s", err.Error())
 	}
 
-	createResp, err := http.Post("http://localhost:8080/collections", "application/json", bytes.NewBuffer(body))
+	createResp, err := http.Post("http://localhost:8081/collections", "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		logrus.Errorf("Error while creating collection: %s", err.Error())
 	}
