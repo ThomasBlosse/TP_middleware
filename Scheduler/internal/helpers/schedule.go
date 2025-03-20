@@ -58,8 +58,7 @@ func action(ctx context.Context) {
 func Schedule() {
 	ctx := context.Background()
 	sc := scheduler.NewScheduler()
-	sc.Add(ctx, action, time.Second*5)
-
+	sc.Add(ctx, action, time.Second*2)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 
