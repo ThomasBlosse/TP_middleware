@@ -88,8 +88,20 @@ func consume(consumer jetstream.Consumer) error {
 		fmt.Println("Collection received")
 
 		notifications := GeneratingNotification(receivedCollections)
+		if len(notifications) > 0 {
+			jsonData, err := json.Marshal(notifications)
+			if err != nil {
+				logrus.Fatalf("Error marshalling notifications: %v", err)
+			}
 
-		fmt.Println(notifications)
+			err = SendCollection(jsonData)
+			if err != nil {
+				logrus.Fatalf("Error while sending collections: %s", err.Error())
+			}
+			fmt.Println("notifications sent")
+		} else {
+			fmt.Println("No differences were find")
+		}
 
 		logrus.Debug(string(msg.Data()))
 		_ = msg.Ack()
