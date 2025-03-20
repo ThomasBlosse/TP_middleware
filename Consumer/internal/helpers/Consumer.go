@@ -5,15 +5,19 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sirupsen/logrus"
-	"sync"
 	"time"
 )
 
-func StartConsumer() []models.Collection {
-	nc, _ := nats.Connect(nats.DefaultURL)
+var (
+	nc *nats.Conn
+)
+
+func StartConsumer() error {
+	nc, _ = nats.Connect(nats.DefaultURL)
 	defer nc.Close()
 
 	js, err := jetstream.New(nc)
@@ -76,46 +80,69 @@ func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
 	return &consumer, nil
 }
 
-func consume(consumer jetstream.Consumer) []models.Collection {
-	var receivedCollections []models.Collection
-	collectionsChan := make(chan models.Collection, 100)
-	done := make(chan struct{})
-	var wg sync.WaitGroup
-
+func consume(consumer jetstream.Consumer) error {
 	cc, err := consumer.Consume(func(msg jetstream.Msg) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			var collection models.Collection
+		var receivedCollections []models.Collection
 
-			err := json.Unmarshal(msg.Data(), &collection)
+		err := json.Unmarshal(msg.Data(), &receivedCollections)
+		if err != nil {
+			logrus.Fatalf("Error unmarshalling collection data: %v", err)
+		}
+
+		fmt.Println("Collection received")
+
+		notifications := GeneratingNotification(receivedCollections)
+		if len(notifications) > 0 {
+			jsonData, err := json.Marshal(notifications)
 			if err != nil {
-				logrus.Errorf("Error unmarshalling collection data: %v", err)
-				return
+				logrus.Fatalf("Error marshalling notifications: %v", err)
 			}
 
-			receivedCollections = append(receivedCollections, collection)
+			err = sendNotification(jsonData)
+			if err != nil {
+				logrus.Fatalf("Error while sending collections: %s", err.Error())
+			}
+			fmt.Println("notifications sent")
+		} else {
+			fmt.Println("No differences were find")
+		}
 
-			_ = msg.Ack()
-		}()
+		logrus.Debug(string(msg.Data()))
+		_ = msg.Ack()
 	})
 
-	if err != nil {
-		logrus.Errorf("Error consuming messages: %v", err)
-		return nil
-	}
-
-	go func() {
-		wg.Wait()
-		close(collectionsChan)
-		close(done)
-	}()
-	for collection := range collectionsChan {
-		receivedCollections = append(receivedCollections, collection)
-	}
-
-	<-done
+	<-cc.Closed()
 	cc.Stop()
 
-	return receivedCollections
+	return err
+}
+
+func sendNotification(jsonData []byte) error {
+	var err error
+
+	jsc, err := nc.JetStream()
+	if err != nil {
+		logrus.Fatalf("Error while getting context JetStream: %v", err)
+	}
+
+	//Init stream
+	_, err = jsc.AddStream(&nats.StreamConfig{
+		Name:     "NOTIFICATION",             // nom du stream
+		Subjects: []string{"NOTIFICATION.>"}, // tous les sujets sont sous le format "USERS.*"
+	})
+	if err != nil {
+		logrus.Fatalf("Error while initiating Stream: %v", err)
+	}
+
+	pubAckFuture, err := jsc.PublishAsync("NOTIFICATION.create", jsonData)
+	if err != nil {
+		logrus.Fatalf("Error while publishing data: %s", err.Error())
+	}
+
+	select {
+	case <-pubAckFuture.Ok():
+		return nil
+	case <-pubAckFuture.Err():
+		return errors.New(string(pubAckFuture.Msg().Data))
+	}
 }

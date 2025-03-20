@@ -15,7 +15,7 @@ func GeneratingNotification(collections []models.Collection) []models.Notificati
 	var notifications []models.Notification
 	for _, collection := range collections {
 		different := false
-		query := "http://localhost:8080/collections/" + collection.Uid
+		query := "http://localhost:8081/collections/" + collection.Uid
 		resp, err := http.Get(query)
 		if err != nil {
 			logrus.Fatalf("Error while fetching collection: %s", err.Error())
@@ -60,7 +60,7 @@ func creatingCollection(collection models.Collection) {
 		logrus.Errorf("Error while marshalling collection: %s", err.Error())
 	}
 
-	createResp, err := http.Post("http://localhost:8080/collections", "application/json", bytes.NewBuffer(body))
+	createResp, err := http.Post("http://localhost:8081/collections", "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		logrus.Errorf("Error while creating collection: %s", err.Error())
 	}
