@@ -12,8 +12,12 @@ import (
 	"time"
 )
 
+var (
+	nc *nats.Conn
+)
+
 func StartConsumer() error {
-	nc, _ := nats.Connect(nats.DefaultURL)
+	nc, _ = nats.Connect(nats.DefaultURL)
 	defer nc.Close()
 
 	js, err := jetstream.New(nc)
@@ -94,7 +98,7 @@ func consume(consumer jetstream.Consumer) error {
 				logrus.Fatalf("Error marshalling notifications: %v", err)
 			}
 
-			err = SendCollection(jsonData)
+			err = sendNotification(jsonData)
 			if err != nil {
 				logrus.Fatalf("Error while sending collections: %s", err.Error())
 			}
@@ -111,4 +115,34 @@ func consume(consumer jetstream.Consumer) error {
 	cc.Stop()
 
 	return err
+}
+
+func sendNotification(jsonData []byte) error {
+	var err error
+
+	jsc, err := nc.JetStream()
+	if err != nil {
+		logrus.Fatalf("Error while getting context JetStream: %v", err)
+	}
+
+	//Init stream
+	_, err = jsc.AddStream(&nats.StreamConfig{
+		Name:     "NOTIFICATION",             // nom du stream
+		Subjects: []string{"NOTIFICATION.>"}, // tous les sujets sont sous le format "USERS.*"
+	})
+	if err != nil {
+		logrus.Fatalf("Error while initiating Stream: %v", err)
+	}
+
+	pubAckFuture, err := jsc.PublishAsync("NOTIFICATION.create", jsonData)
+	if err != nil {
+		logrus.Fatalf("Error while publishing data: %s", err.Error())
+	}
+
+	select {
+	case <-pubAckFuture.Ok():
+		return nil
+	case <-pubAckFuture.Err():
+		return errors.New(string(pubAckFuture.Msg().Data))
+	}
 }
