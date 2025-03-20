@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
-	"log"
 )
 
 func SendCollection(jsonData []byte) error {
@@ -12,11 +11,15 @@ func SendCollection(jsonData []byte) error {
 
 	// Connect to a server
 	// create a nats connection
-	nc, _ := nats.Connect(nats.DefaultURL)
+	nc, err := nats.Connect(nats.DefaultURL)
+	if err != nil {
+		logrus.Fatalf("Error connecting to NATS: %v", err)
+	}
+
 	// getting Jetstream context
 	jsc, err := nc.JetStream()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatalf("Error while getting context JetStream: %v", err)
 	}
 
 	//Init stream
@@ -25,7 +28,7 @@ func SendCollection(jsonData []byte) error {
 		Subjects: []string{"USERS.>"}, // tous les sujets sont sous le format "USERS.*"
 	})
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatalf("Error while initiating Stream: %v", err)
 	}
 
 	pubAckFuture, err := jsc.PublishAsync("USERS.create", jsonData)
