@@ -7,9 +7,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/frontmatter"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"text/template"
@@ -87,7 +90,13 @@ func writeMail(email string, description string, base string, change string) err
 		return fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	req.Header.Set("Authorization", "token") //Todo hiding token
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatalf("Erreur lors du chargement du fichier .env : %v", err)
+	}
+	apiToken := os.Getenv("API_TOKEN")
+
+	req.Header.Set("Authorization", apiToken)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
