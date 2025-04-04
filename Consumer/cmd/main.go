@@ -9,6 +9,4 @@ func main() {
 
 	collections := helpers.StartConsumer()
 	fmt.Println(collections)
-
-	//TODO send notifiation to alerter
 }
