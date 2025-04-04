@@ -2,12 +2,15 @@ package helpers
 
 import (
 	"Alerter/internal/models"
+	"embed"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"strconv"
 )
+
+var embeddedTemplates embed.FS
 
 func SendMail(notification models.Notification) {
 	alerts := getAlerts(notification.ResourceIds)
@@ -45,4 +48,8 @@ func getAlerts(ResourceIds []int) []models.Alerts {
 		}
 	}
 	return allAlerts
+}
+
+func writeMail(email string, description string, base string, change string) {
+
 }
