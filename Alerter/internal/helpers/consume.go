@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"Alerter/internal/models"
 	"context"
 	"encoding/json"
 	"errors"
@@ -8,7 +9,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sirupsen/logrus"
-	"Alerter/internal/models"
 	"time"
 )
 
@@ -79,12 +79,22 @@ func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
 
 func consume(consumer jetstream.Consumer) error {
 	cc, err := consumer.Consume(func(msg jetstream.Msg) {
-		var receivedNotifications [] models.Notification
+		var receivedNotifications []models.Notification
 
 		err := json.Unmarshal(msg.Data(), &receivedNotifications)
 		if err != nil {
 			logrus.Fatalf("Error unmarshalling notification data: %v", err)
 		}
 		fmt.Println("Notification received")
-	}
+
+		for _, notification := range receivedNotifications {
+			SendMail(notification)
+		}
+
+		logrus.Debug(string(msg.Data()))
+		_ = msg.Ack()
+	})
+	<-cc.Closed()
+	cc.Stop()
+	return err
 }
