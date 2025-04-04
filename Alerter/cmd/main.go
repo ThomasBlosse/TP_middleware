@@ -1,8 +1,6 @@
 package main
 
-import (
-	"Consumer/internal/helpers"
-)
+import "Alerter/internal/helpers"
 
 func main() {
 
@@ -10,4 +8,5 @@ func main() {
 	if err != nil {
 		return
 	}
+
 }

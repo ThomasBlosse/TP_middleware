@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"Scheduler/internal/models"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -44,8 +43,6 @@ func action(ctx context.Context) {
 	if err != nil {
 		logrus.Fatalf("Error while marshalling collections: %s", err.Error())
 	}
-	var testData []models.Collection
-	err = json.Unmarshal(jsonData, &testData)
 
 	err = SendCollection(jsonData)
 	if err != nil {
