@@ -37,3 +37,32 @@ func StartConsumer() error {
 	return nil
 
 }
+
+func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
+
+	js, _ := jetstream.New(nc)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	stream, err := js.Stream(ctx, "NOTIFICATIONS")
+	if err != nil {
+		return nil, err
+	}
+
+	consumer, err := stream.Consumer(ctx, "collection_consumer")
+	if err != nil {
+		consumer, err = stream.CreateConsumer(ctx, jetstream.ConsumerConfig{
+			Durable:     "notification_consumer",
+			Name:        "notification_consumer",
+			Description: "Alerter that receive from consumer",
+		})
+		if err != nil {
+			return nil, err
+		}
+		logrus.Infof("Created new consumer: notification_consumer")
+	} else {
+		logrus.Infof("Using existing consumer: notification_consumer")
+	}
+
+	return &consumer, nil
+}
