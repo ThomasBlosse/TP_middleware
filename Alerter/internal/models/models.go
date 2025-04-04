@@ -13,7 +13,6 @@ type Alerts struct {
 }
 
 type MailTemplateData struct {
-	EventName   string
 	Description string
 	Base        string
 	Change      string

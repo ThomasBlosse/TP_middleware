@@ -1,13 +1,16 @@
 ---
-subject: "EDU Middleware - événement modifié"
+subject: "EDT - changement détecter"
 ---
 
-<p>Bonjour,</p>
+Bonjour,
 
-<p>L'évènement <strong>{{ .EventName }}</strong> a été modifié.</p>
-<p>Ancienne valeur : <strong>{{ .Base }}</strong></p>
-<p>Nouvelle valeur : <strong>{{ .Change }}</strong></p>
-<p>Description : {{ .Description }}</p>
+Un changement a été trouver dans l'emploie du temps:
 
-<p>Cordialement,</p>
-<p>L'équipe Middleware</p>
+- Type de changement et cours concerné: {{ .Description }}
+
+    - Anciennement: {{ .Base }}
+    - Maintenant: {{ .Change }}
+
+Cordialement,
+L'API Middleware
+

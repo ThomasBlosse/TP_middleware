@@ -18,7 +18,7 @@ import (
 func SendMail(notification models.Notification) {
 	alerts := getAlerts(notification.ResourceIds)
 	for _, alert := range alerts {
-		err := WriteMail(alert.Email, notification.Description, notification.OldValue, notification.NewValue)
+		err := writeMail(alert.Email, notification.Description, notification.OldValue, notification.NewValue)
 		if err != nil {
 			logrus.Error(err)
 		}
@@ -59,9 +59,8 @@ func getAlerts(ResourceIds []int) []models.Alerts {
 	return allAlerts
 }
 
-func WriteMail(email string, description string, base string, change string) error {
+func writeMail(email string, description string, base string, change string) error {
 	mailContent, mailSubject, err := config.GetStringFromEmbeddedTemplate("templates/email.html", models.MailTemplateData{
-		EventName:   "Modification d'un événement",
 		Description: description,
 		Base:        base,
 		Change:      change,
@@ -101,7 +100,6 @@ func WriteMail(email string, description string, base string, change string) err
 	}
 	defer resp.Body.Close()
 
-	// Lire la réponse
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("failed to send email, status: %d, response: %s", resp.StatusCode, string(body))
