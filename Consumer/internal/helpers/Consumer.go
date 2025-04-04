@@ -128,7 +128,7 @@ func sendNotification(jsonData []byte) error {
 	//Init stream
 	_, err = jsc.AddStream(&nats.StreamConfig{
 		Name:     "NOTIFICATION",             // nom du stream
-		Subjects: []string{"NOTIFICATION.>"}, // tous les sujets sont sous le format "USERS.*"
+		Subjects: []string{"NOTIFICATION.>"}, // tous les sujets sont sous le format "NOTIFICATION.*"
 	})
 	if err != nil {
 		logrus.Fatalf("Error while initiating Stream: %v", err)
