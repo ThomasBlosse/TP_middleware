@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import "Alerter/internal/helpers"
 
 func main() {
-	fmt.Println("Hello World")
+
+	err := helpers.StartConsumer()
+	if err != nil {
+		return
+	}
+
 }
