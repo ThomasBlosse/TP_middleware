@@ -30,7 +30,7 @@ func getAlerts(ResourceIds []int) []models.Alerts {
 	alertsMap := make(map[string]struct{})
 
 	for _, resourceId := range ResourceIds {
-		resp, err := http.Get("http://localhost:8081/alerts/" + strconv.Itoa(resourceId))
+		resp, err := http.Get("http://localhost:8080/alerts/" + strconv.Itoa(resourceId))
 		if err != nil {
 			logrus.Fatalf("Error while fetching alerts: %s", err.Error())
 		}

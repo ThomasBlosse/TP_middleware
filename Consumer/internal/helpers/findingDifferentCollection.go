@@ -77,7 +77,7 @@ func compareLocation(collection models.Collection, timetable models.Collection) 
 	if collection.Location != timetable.Location {
 		return models.Notification{
 			ResourceIds: collection.ResourceIds,
-			Description: "Changement de Salle : " + collection.Name,
+			Description: "Changement de Salle du cours : " + collection.Name,
 			OldValue:    timetable.Location,
 			NewValue:    collection.Location,
 		}
@@ -89,7 +89,7 @@ func compareStart(collection models.Collection, timetable models.Collection) mod
 	if collection.Started != timetable.Started {
 		return models.Notification{
 			ResourceIds: collection.ResourceIds,
-			Description: "Changement de début du cours" + collection.Name,
+			Description: "Changement de début du cours : " + collection.Name,
 			OldValue:    formatDateTime(timetable.Started),
 			NewValue:    formatDateTime(collection.Started),
 		}

@@ -24,16 +24,16 @@ func StartConsumer() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err = js.Stream(ctx, "NOTIFICATIONS")
+	_, err = js.Stream(ctx, "NOTIFICATION")
 	if errors.Is(err, nats.ErrStreamNotFound) {
 		_, err = js.CreateStream(ctx, jetstream.StreamConfig{
-			Name:     "NOTIFICATIONS",
-			Subjects: []string{"NOTIFICATIONS.>"},
+			Name:     "NOTIFICATION",
+			Subjects: []string{"NOTIFICATION.>"},
 		})
 		if err != nil {
 			logrus.Fatalf("Failed to create stream: %v", err)
 		}
-		logrus.Infof("Created stream: NOTIFICATIONS")
+		logrus.Infof("Created stream: NOTIFICATION")
 	} else if err != nil {
 		logrus.Fatalf("Error retrieving stream: %v", err)
 	}
@@ -54,7 +54,7 @@ func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	stream, err := js.Stream(ctx, "NOTIFICATIONS")
+	stream, err := js.Stream(ctx, "NOTIFICATION")
 	if err != nil {
 		return nil, err
 	}

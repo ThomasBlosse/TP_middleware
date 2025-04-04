@@ -4,12 +4,14 @@ subject: "EDT - changement détecter"
 
 Bonjour,
 
-Un changement a été trouver dans l'emploie du temps:
+Un changement a été trouver dans l'emploi du temps:
 
-- Type de changement et cours concerné: {{ .Description }}
+- Type de changement et cours concerné:
+{{ .Description }}
 
-    - Anciennement: {{ .Base }}
-    - Maintenant: {{ .Change }}
+- Maintenant: {{ .Change }}
+- Anciennement: {{ .Base }}
+
 
 Cordialement,
 L'API Middleware
