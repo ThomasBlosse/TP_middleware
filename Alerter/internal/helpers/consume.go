@@ -2,10 +2,13 @@ package helpers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sirupsen/logrus"
+	"Alerter/internal/models"
 	"time"
 )
 
@@ -34,7 +37,14 @@ func StartConsumer() error {
 	} else if err != nil {
 		logrus.Fatalf("Error retrieving stream: %v", err)
 	}
-	return nil
+
+	consumer, err := eventConsumer(nc)
+	if err != nil {
+		logrus.Warnf("Error during NATS consumer creation: %v", err)
+		return nil
+	}
+
+	return consume(*consumer)
 
 }
 
@@ -65,4 +75,16 @@ func eventConsumer(nc *nats.Conn) (*jetstream.Consumer, error) {
 	}
 
 	return &consumer, nil
+}
+
+func consume(consumer jetstream.Consumer) error {
+	cc, err := consumer.Consume(func(msg jetstream.Msg) {
+		var receivedNotifications [] models.Notification
+
+		err := json.Unmarshal(msg.Data(), &receivedNotifications)
+		if err != nil {
+			logrus.Fatalf("Error unmarshalling notification data: %v", err)
+		}
+		fmt.Println("Notification received")
+	}
 }
