@@ -18,6 +18,12 @@ func ConvertEventsToCollections(eventArray []map[string]string) ([]models.Collec
 		"M1 Groupe option":   {62090},
 		"M1 -- Tutorat L2":   {56529},
 		"MASTER 1 INFO":      {13295, 13345, 13397, 7224, 7225, 62962, 62090, 56529},
+		"L3 S6":              {26888},
+		"L3 info":            {26888},
+		"gA":                 {57454},
+		"gB":                 {57455},
+		"gC":                 {57456},
+		"gD":                 {57457},
 	}
 
 	var collections []models.Collection
