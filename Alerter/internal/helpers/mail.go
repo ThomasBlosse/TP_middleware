@@ -1,12 +1,11 @@
 package helpers
 
 import (
+	"Alerter/config"
 	"Alerter/internal/models"
 	"bytes"
-	"embed"
 	"encoding/json"
 	"fmt"
-	"github.com/adrg/frontmatter"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -14,16 +13,12 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
-	"text/template"
 )
-
-var embeddedTemplates embed.FS
 
 func SendMail(notification models.Notification) {
 	alerts := getAlerts(notification.ResourceIds)
 	for _, alert := range alerts {
-		err := writeMail(alert.Email, notification.Description, notification.OldValue, notification.NewValue)
+		err := WriteMail(alert.Email, notification.Description, notification.OldValue, notification.NewValue)
 		if err != nil {
 			logrus.Error(err)
 		}
@@ -64,8 +59,8 @@ func getAlerts(ResourceIds []int) []models.Alerts {
 	return allAlerts
 }
 
-func writeMail(email string, description string, base string, change string) error {
-	mailContent, mailSubject, err := getStringFromEmbeddedTemplate("templates/email.html", models.MailTemplateData{
+func WriteMail(email string, description string, base string, change string) error {
+	mailContent, mailSubject, err := config.GetStringFromEmbeddedTemplate("templates/email.html", models.MailTemplateData{
 		EventName:   "Modification d'un événement",
 		Description: description,
 		Base:        base,
@@ -114,25 +109,4 @@ func writeMail(email string, description string, base string, change string) err
 
 	logrus.Infof("Email successfully sent to %s", email)
 	return nil
-}
-
-func getStringFromEmbeddedTemplate(templatePath string, body interface{}) (content string, subject string, err error) {
-	temp, err := template.ParseFS(embeddedTemplates, templatePath)
-	if err != nil {
-		return "", "", err
-	}
-	var tpl bytes.Buffer
-	if err := temp.Execute(&tpl, body); err != nil {
-		return "", "", err
-	}
-
-	var matter struct {
-		Subject string `yaml:"subject"`
-	}
-	mailContent, err := frontmatter.Parse(strings.NewReader(tpl.String()), &matter)
-	if err != nil {
-		return "", "", err
-	}
-
-	return string(mailContent), matter.Subject, nil
 }
