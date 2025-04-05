@@ -9,6 +9,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetAlerts
+// @Summary Get all alerts
+// @Description Retrieves all the alerts in the system
+// @Tags alerts
+// @Produce json
+// @Success 200 {array} models.Alerts
+// @Failure 500 {object} models.CustomError
+// @Router /alerts [get]
 func GetAlerts(w http.ResponseWriter, _ *http.Request) {
 	// calling service
 	alerts, err := service.GetAllAlerts()

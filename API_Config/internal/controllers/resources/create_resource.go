@@ -9,6 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// CreateResource
+// @Summary Create resource
+// @Description Creates a new resource
+// @Tags resources
+// @Accept json
+// @Produce json
+// @Param resource body models.Resources true "New resource"
+// @Success 201 {object} models.Resources
+// @Failure 400 {object} models.CustomError
+// @Failure 500 {object} models.CustomError
+// @Router /resources [post]
 func CreateResource(w http.ResponseWriter, r *http.Request) {
 	var newResource models.Resources
 

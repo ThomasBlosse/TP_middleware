@@ -9,6 +9,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetResources
+// @Summary Get all resources
+// @Description Retrieves all the resources
+// @Tags resources
+// @Produce json
+// @Success 200 {array} models.Resources
+// @Failure 500 {object} models.CustomError
+// @Router /resources [get]
 func GetResources(w http.ResponseWriter, _ *http.Request) {
 	resources, err := service.GetAllResources()
 	if err != nil {

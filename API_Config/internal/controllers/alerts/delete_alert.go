@@ -9,6 +9,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DeleteAlert
+// @Summary Delete alert
+// @Description Deletes an alert associated with the authenticated user
+// @Tags alerts
+// @Success 200 {object} map[string]string "Alert deleted successfully"
+// @Failure 500 {object} models.CustomError
+// @Router /alerts/{id} [delete]
 func DeleteAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	email, _ := ctx.Value("Email").(string)

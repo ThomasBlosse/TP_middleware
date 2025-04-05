@@ -12,6 +12,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetAlertsUid
+// @Summary Get alerts by resource ID
+// @Description Retrieves alerts associated with a specific resource
+// @Tags alerts
+// @Produce json
+// @Param id path int true "Resource ID"
+// @Success 200 {array} models.Alerts
+// @Failure 422 {object} models.CustomError
+// @Failure 500 {object} models.CustomError
+// @Router /alerts/{id} [get]
 func GetAlertsUid(w http.ResponseWriter, r *http.Request) {
 	ucaIdParam := chi.URLParam(r, "id")
 	ucaId, err := strconv.Atoi(ucaIdParam)

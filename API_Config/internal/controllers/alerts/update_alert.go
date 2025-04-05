@@ -9,6 +9,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// UpdateAlert
+// @Summary Update alert
+// @Description Updates the targets of an existing alert for the authenticated user
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string "Alert updated successfully"
+// @Failure 400 {object} models.CustomError
+// @Failure 500 {object} models.CustomError
+// @Router /alerts/{id} [put]
 func UpdateAlert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	email, _ := ctx.Value("Email").(string)

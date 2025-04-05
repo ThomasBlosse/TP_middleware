@@ -9,6 +9,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DeleteResource
+// @Summary Delete resource
+// @Description Deletes a resource by its ID
+// @Tags resources
+// @Success 200 {object} map[string]string "Resource deleted successfully"
+// @Failure 500 {object} models.CustomError
+// @Router /resources/{id} [delete]
 func DeleteResource(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ucaId, _ := ctx.Value("resourceId").(int)

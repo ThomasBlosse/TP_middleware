@@ -9,6 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// CreateAlert
+// @Summary Create a new alert
+// @Description Creates a new alert from the JSON payload and saves it in the database
+// @Tags alerts
+// @Accept  json
+// @Produce  json
+// @Param alert body models.Alerts true "Alert to create"
+// @Success 201 {object} models.Alerts
+// @Failure 400 {object} models.CustomError "Invalid JSON"
+// @Failure 500 {object} models.CustomError "Internal Server Error"
+// @Router /alerts [post]
 func CreateAlert(w http.ResponseWriter, r *http.Request) {
 	var newAlert models.Alerts
 

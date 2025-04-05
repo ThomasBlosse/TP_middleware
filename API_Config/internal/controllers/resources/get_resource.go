@@ -9,6 +9,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetResource
+// @Summary Get resource by ID
+// @Description Retrieves a resource given its ID
+// @Tags resources
+// @Produce json
+// @Success 200 {object} models.Resources
+// @Failure 500 {object} models.CustomError
+// @Router /resources/{id} [get]
 func GetResource(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ucaId, _ := ctx.Value("resourceId").(int)
