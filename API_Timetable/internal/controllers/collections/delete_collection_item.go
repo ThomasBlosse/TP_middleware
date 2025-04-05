@@ -17,7 +17,7 @@ import (
 // @Param        item_id  path      string  true  "Item UUID formatted ID"
 // @Success      200      "Item deleted successfully"
 // @Failure      500      "Something went wrong"
-// @Router       /collections/{id}/items/{item_id} [delete]
+// @Router       /collections/{id} [delete]
 func DeleteCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(string)

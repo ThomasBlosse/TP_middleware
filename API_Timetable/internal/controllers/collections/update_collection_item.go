@@ -14,11 +14,11 @@ import (
 // @Summary      Update an item in a collection.
 // @Description  Modify an existing item in a collection.
 // @Param        id          path      string             true  "Collection UUID formatted ID"
-// @Param        item        body      models.Item        true  "Updated item data"
+// @Param        item        body      models.Collection  true  "Updated item data"
 // @Success      200         "Item updated successfully"
 // @Failure      400         "Invalid request body"
 // @Failure      500         "Something went wrong"
-// @Router       /collections/{id}/items [put]
+// @Router       /collections/{id} [put]
 func UpdateCollectionItem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(string)

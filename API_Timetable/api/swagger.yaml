@@ -1,0 +1,136 @@
+basePath: /
+definitions:
+  models.Collection:
+    properties:
+      description:
+        type: string
+      end:
+        type: string
+      lastupdate:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+      resourceIds:
+        items:
+          type: integer
+        type: array
+      started:
+        type: string
+      uid:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: Alban.MUNARI@etu.uca.fr
+    name: Alban.Munari
+  description: API to manage collections.
+  termsOfService: http://swagger.io/terms/
+  title: Timetable API
+  version: "1.0"
+paths:
+  /collections:
+    get:
+      description: Get collections.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Collection'
+            type: array
+        "500":
+          description: Something went wrong
+      summary: Get collections.
+      tags:
+      - collections
+    post:
+      description: Add a new collection to the database.
+      parameters:
+      - description: Collection data
+        in: body
+        name: collection
+        required: true
+        schema:
+          $ref: '#/definitions/models.Collection'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Collection'
+        "400":
+          description: Invalid request body
+        "500":
+          description: Something went wrong
+      summary: Create a new collection.
+      tags:
+      - collections
+  /collections/{id}:
+    delete:
+      description: Remove a specific item from a collection.
+      parameters:
+      - description: Collection UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item UUID formatted ID
+        in: path
+        name: item_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Item deleted successfully
+        "500":
+          description: Something went wrong
+      summary: Delete an item from a collection.
+      tags:
+      - collections
+    get:
+      description: Get a collection.
+      parameters:
+      - description: Collection UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Collection'
+        "422":
+          description: Cannot parse id
+        "500":
+          description: Something went wrong
+      summary: Get a collection.
+      tags:
+      - collections
+    put:
+      description: Modify an existing item in a collection.
+      parameters:
+      - description: Collection UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated item data
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.Collection'
+      responses:
+        "200":
+          description: Item updated successfully
+        "400":
+          description: Invalid request body
+        "500":
+          description: Something went wrong
+      summary: Update an item in a collection.
+      tags:
+      - collections
+swagger: "2.0"
