@@ -9,14 +9,14 @@ import (
 
 // @title Config API
 // @version 1.0
-// @description Microservice pour la gestion des configurations
+// @description APi to handle configurations
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name Thomas Blosse
-// @contact.email thomas.blosse.gilio@gmail.com
+// @contact.email Thomas.BLOSSE@etu.uca.fr
 
 // @host localhost:8080
-// @BasePath /api/config
+// @BasePath /
 
 func RegisterSwaggerRoutes(r chi.Router) {
 	r.Get("/swagger/*", httpSwagger.Handler(

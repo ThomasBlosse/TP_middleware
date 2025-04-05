@@ -12,7 +12,7 @@ const docTemplate = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Thomas Blosse",
-            "email": "thomas.blosse.gilio@gmail.com"
+            "email": "Thomas.BLOSSE@etu.uca.fr"
         },
         "version": "{{.Version}}"
     },
@@ -365,10 +365,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/api/config",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Config API",
-	Description:      "Microservice pour la gestion des configurations",
+	Description:      "APi to handle configurations",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

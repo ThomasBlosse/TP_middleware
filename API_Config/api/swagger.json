@@ -1,17 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Microservice pour la gestion des configurations",
+        "description": "APi to handle configurations",
         "title": "Config API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Thomas Blosse",
-            "email": "thomas.blosse.gilio@gmail.com"
+            "email": "Thomas.BLOSSE@etu.uca.fr"
         },
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/api/config",
+    "basePath": "/",
     "paths": {
         "/alerts": {
             "get": {
